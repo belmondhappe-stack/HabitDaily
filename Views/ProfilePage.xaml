@@ -209,6 +209,109 @@
                     </VerticalStackLayout>
                 </Border>
             </Grid>
+
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Paramètres du compte"
+                       TextColor="{StaticResource TextWhite}"
+                       FontSize="16"
+                       FontAttributes="Bold" />
+
+                <Border BackgroundColor="{StaticResource CardBackground}"
+                        Stroke="{StaticResource BorderColor}"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="14">
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                          ColumnSpacing="12">
+                        <Border WidthRequest="42"
+                                HeightRequest="42"
+                                BackgroundColor="#193D2D"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 14"
+                                VerticalOptions="Center">
+                            <Label Text="{x:Static constants:IconFont.Lock}"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="{StaticResource PrimaryGreen}"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1"
+                                             VerticalOptions="Center"
+                                             Spacing="3">
+                            <Label Text="Stockage des données"
+                                   TextColor="{StaticResource TextWhite}"
+                                   FontSize="14"
+                                   FontAttributes="Bold" />
+                            <Label Text="Données enregistrées localement sur cet appareil"
+                                   TextColor="{StaticResource TextGray}"
+                                   FontSize="11" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2"
+                               Text="{x:Static constants:IconFont.Check}"
+                               FontFamily="MaterialIcons"
+                               FontSize="19"
+                               TextColor="{StaticResource PrimaryGreen}"
+                               VerticalTextAlignment="Center"
+                               SemanticProperties.Description="Stockage local actif" />
+                    </Grid>
+                </Border>
+
+                <Border BackgroundColor="{StaticResource CardBackground}"
+                        Stroke="{StaticResource BorderColor}"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="14">
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                          ColumnSpacing="12">
+                        <Border WidthRequest="42"
+                                HeightRequest="42"
+                                BackgroundColor="#193D2D"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 14"
+                                VerticalOptions="Center">
+                            <Label Text="{x:Static constants:IconFont.Person}"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="20"
+                                   TextColor="{StaticResource PrimaryGreen}"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1"
+                                             VerticalOptions="Center"
+                                             Spacing="3">
+                            <Label Text="Statut du compte"
+                                   TextColor="{StaticResource TextWhite}"
+                                   FontSize="14"
+                                   FontAttributes="Bold" />
+                            <Label Text="Votre profil est prêt"
+                                   TextColor="{StaticResource TextGray}"
+                                   FontSize="11" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2"
+                               Text="ACTIF"
+                               TextColor="{StaticResource PrimaryGreen}"
+                               FontSize="10"
+                               FontAttributes="Bold"
+                               VerticalTextAlignment="Center" />
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+
+            <Button Text="Se déconnecter"
+                    Command="{Binding LogoutCommand}"
+                    BackgroundColor="#351B1D"
+                    BorderColor="#65383B"
+                    BorderWidth="1"
+                    TextColor="#FF777D"
+                    FontAttributes="Bold"
+                    CornerRadius="16"
+                    HeightRequest="52"
+                    Margin="0,2,0,0">
+                <Button.ImageSource>
+                    <FontImageSource Glyph="{x:Static constants:IconFont.Power}"
+                                     FontFamily="MaterialIcons"
+                                     Color="#FF777D" />
+                </Button.ImageSource>
+            </Button>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

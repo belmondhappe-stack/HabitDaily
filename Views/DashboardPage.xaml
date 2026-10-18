@@ -5,6 +5,7 @@
              xmlns:models="clr-namespace:HabitDaily.Models"
              xmlns:viewModels="clr-namespace:HabitDaily.ViewModels"
              x:Class="HabitDaily.Views.DashboardPage"
+             x:Name="DashboardRoot"
              x:DataType="viewModels:DashboardViewModel"
              BackgroundColor="{StaticResource BackgroundDark}"
              Title="Accueil">
@@ -57,7 +58,7 @@
                                 WidthRequest="44"
                                 HeightRequest="44"
                                 Padding="0"
-                                Command="{Binding AddHabitCommand}"
+                                Command="{Binding BindingContext.AddHabitCommand, Source={x:Reference DashboardRoot}}"
                                 SemanticProperties.Description="Ajouter une habitude" />
                     </Grid>
 

@@ -14,7 +14,7 @@
         <ScrollView>
             <VerticalStackLayout Padding="16,14,16,26"
                                  Spacing="16"
-                                 HorizontalOptions="Center"
+                                 HorizontalOptions="Fill"
                                  MaximumWidthRequest="520">
                 <Grid ColumnDefinitions="*,Auto,Auto"
                       ColumnSpacing="8">
@@ -54,7 +54,7 @@
                         Stroke="{StaticResource BorderColor}"
                         StrokeShape="RoundRectangle 24"
                         Padding="14,12"
-                        HorizontalOptions="Center"
+                        HorizontalOptions="Fill"
                         MaximumWidthRequest="460">
                     <Grid RowDefinitions="Auto,Auto,Auto"
                           RowSpacing="8">
@@ -99,44 +99,47 @@
                             <Label Grid.Column="6" Text="D" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="12" />
                         </Grid>
 
-                        <CollectionView Grid.Row="2"
-                                        AutomationId="CalendarMonthGrid"
-                                        ItemsSource="{Binding CalendarDays}"
-                                        SelectionMode="None"
-                                        VerticalScrollBarVisibility="Never"
-                                        HeightRequest="{Binding CalendarGridHeight}">
-                            <CollectionView.ItemsLayout>
-                                <GridItemsLayout Orientation="Vertical"
-                                                 Span="7"
-                                                 HorizontalItemSpacing="2"
-                                                 VerticalItemSpacing="0" />
-                            </CollectionView.ItemsLayout>
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:CalendarDay">
-                                    <Border BackgroundColor="{Binding BackgroundColor}"
-                                            Stroke="{Binding StrokeColor}"
-                                            StrokeShape="Ellipse"
-                                            StrokeThickness="2"
-                                            WidthRequest="33"
-                                            HeightRequest="33"
-                                            HorizontalOptions="Center"
-                                            VerticalOptions="Center"
-                                            SemanticProperties.Description="{Binding AccessibilityDescription}">
-                                        <Label Text="{Binding DayNumber}"
-                                               TextColor="{Binding TextColor}"
-                                               FontSize="13"
-                                               FontAttributes="Bold"
-                                               HorizontalTextAlignment="Center"
-                                               VerticalTextAlignment="Center" />
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:CalendarViewModel}}, Path=SelectDayCommand}"
-                                                CommandParameter="{Binding .}" />
-                                        </Border.GestureRecognizers>
-                                    </Border>
+                        <VerticalStackLayout Grid.Row="2"
+                                             AutomationId="CalendarMonthGrid"
+                                             BindableLayout.ItemsSource="{Binding CalendarWeeks}"
+                                             Spacing="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:CalendarWeek">
+                                    <Grid ColumnDefinitions="*,*,*,*,*,*,*"
+                                          ColumnSpacing="2"
+                                          HeightRequest="36"
+                                          HorizontalOptions="Fill"
+                                          BindableLayout.ItemsSource="{Binding Days}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="models:CalendarDay">
+                                                <Border Grid.Column="{Binding ColumnIndex}"
+                                                        BackgroundColor="{Binding BackgroundColor}"
+                                                        Stroke="{Binding StrokeColor}"
+                                                        StrokeShape="Ellipse"
+                                                        StrokeThickness="2"
+                                                        WidthRequest="33"
+                                                        HeightRequest="33"
+                                                        HorizontalOptions="Center"
+                                                        VerticalOptions="Center"
+                                                        SemanticProperties.Description="{Binding AccessibilityDescription}">
+                                                    <Label Text="{Binding DayNumber}"
+                                                           TextColor="{Binding TextColor}"
+                                                           FontSize="13"
+                                                           FontAttributes="Bold"
+                                                           HorizontalTextAlignment="Center"
+                                                           VerticalTextAlignment="Center" />
+                                                    <Border.GestureRecognizers>
+                                                        <TapGestureRecognizer
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:CalendarViewModel}}, Path=SelectDayCommand}"
+                                                            CommandParameter="{Binding .}" />
+                                                    </Border.GestureRecognizers>
+                                                </Border>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </Grid>
                                 </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
                     </Grid>
                 </Border>
 

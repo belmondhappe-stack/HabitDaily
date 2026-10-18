@@ -22,6 +22,7 @@ public sealed class CalendarViewModel : BaseViewModel
     public CalendarViewModel()
     {
         CalendarDays = new ObservableCollection<CalendarDay>();
+        CalendarWeeks = new ObservableCollection<CalendarWeek>();
         DailyLogs = new ObservableCollection<HabitLogDetails>();
 
         PreviousMonthCommand = new Command(async () => await ChangeMonthAsync(-1));
@@ -34,6 +35,8 @@ public sealed class CalendarViewModel : BaseViewModel
     }
 
     public ObservableCollection<CalendarDay> CalendarDays { get; }
+
+    public ObservableCollection<CalendarWeek> CalendarWeeks { get; }
 
     public ObservableCollection<HabitLogDetails> DailyLogs { get; }
 
@@ -60,24 +63,12 @@ public sealed class CalendarViewModel : BaseViewModel
                 return;
 
             OnPropertyChanged(nameof(DisplayedMonthLabel));
-            OnPropertyChanged(nameof(CalendarGridHeight));
             BuildCalendarDays();
         }
     }
 
     public string DisplayedMonthLabel =>
         FrenchCulture.TextInfo.ToTitleCase(DisplayedMonth.ToString("MMMM yyyy", FrenchCulture));
-
-    public double CalendarGridHeight
-    {
-        get
-        {
-            var firstDay = new DateTime(DisplayedMonth.Year, DisplayedMonth.Month, 1);
-            var leadingDays = ((int)firstDay.DayOfWeek + 6) % 7;
-            var weekCount = (leadingDays + DateTime.DaysInMonth(DisplayedMonth.Year, DisplayedMonth.Month) + 6) / 7;
-            return weekCount * 36;
-        }
-    }
 
     public string SelectedDateLabel =>
         FrenchCulture.TextInfo.ToTitleCase(SelectedDate.ToString("dddd d MMMM yyyy", FrenchCulture));
@@ -164,6 +155,9 @@ public sealed class CalendarViewModel : BaseViewModel
 
     private async Task ChangeMonthAsync(int monthDelta)
     {
+        if (IsBusy)
+            return;
+
         var newMonth = DisplayedMonth.AddMonths(monthDelta);
         _monthLogs.Clear();
         DisplayedMonth = newMonth;
@@ -174,6 +168,9 @@ public sealed class CalendarViewModel : BaseViewModel
 
     private async Task SelectTodayAsync()
     {
+        if (IsBusy)
+            return;
+
         SelectedDate = DateTime.Today;
         if (DisplayedMonth.Year != SelectedDate.Year || DisplayedMonth.Month != SelectedDate.Month)
         {
@@ -209,14 +206,24 @@ public sealed class CalendarViewModel : BaseViewModel
         var firstVisibleDate = firstDay.AddDays(-mondayOffset);
 
         CalendarDays.Clear();
+        CalendarWeeks.Clear();
+        var weekDays = new List<CalendarDay>(7);
         for (var index = 0; index < visibleDayCount; index++)
         {
             var date = firstVisibleDate.AddDays(index);
-            CalendarDays.Add(new CalendarDay(date, date.Month == DisplayedMonth.Month)
+            var day = new CalendarDay(date, date.Month == DisplayedMonth.Month, index % 7)
             {
                 IsSelected = date == SelectedDate,
                 HasCompletions = completedDates.Contains(date)
-            });
+            };
+            CalendarDays.Add(day);
+            weekDays.Add(day);
+
+            if (weekDays.Count != 7)
+                continue;
+
+            CalendarWeeks.Add(new CalendarWeek(weekDays));
+            weekDays = new List<CalendarDay>(7);
         }
     }
 

@@ -125,6 +125,22 @@ public class DashboardViewModel : BaseViewModel
 
     private async Task OnAddHabitAsync()
     {
-        await Shell.Current.GoToAsync(nameof(CreateHabitPage));
+        try
+        {
+            var shell = Shell.Current
+                ?? throw new InvalidOperationException("La navigation de l'application n'est pas disponible.");
+            await shell.GoToAsync(nameof(CreateHabitPage));
+        }
+        catch (ArgumentException exception)
+        {
+            await CurrentPage.DisplayAlertAsync(
+                "Navigation indisponible",
+                $"Impossible d'ouvrir la création d'habitude : {exception.Message}",
+                "OK");
+        }
+        catch (InvalidOperationException exception)
+        {
+            await CurrentPage.DisplayAlertAsync("Navigation indisponible", exception.Message, "OK");
+        }
     }
 }

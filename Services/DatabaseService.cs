@@ -210,6 +210,9 @@ namespace HabitDaily.Services
             Preferences.Set(CurrentUserIdPreferenceKey, user.Id);
         }
 
+        public static void ClearCurrentUser() =>
+            Preferences.Remove(CurrentUserIdPreferenceKey);
+
         private static async Task<List<HabitLog>> GetCompletedHabitLogsByUserAsync(int userId)
         {
             var database = await GetDatabaseAsync();

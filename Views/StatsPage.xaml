@@ -51,11 +51,11 @@
                                FontFamily="MaterialIcons"
                                FontSize="22"
                                TextColor="{StaticResource PrimaryGreen}" />
-                        <Label Text="{Binding ActiveDays, StringFormat='{0:00}'}"
+                        <Label Text="{Binding MonthProgressLabel}"
                                TextColor="{StaticResource TextWhite}"
                                FontSize="24"
                                FontAttributes="Bold" />
-                        <Label Text="Jours actifs"
+                        <Label Text="Jours actifs · ce mois"
                                TextColor="{StaticResource TextGray}"
                                FontSize="12" />
                     </VerticalStackLayout>
@@ -93,7 +93,7 @@
                                    TextColor="{StaticResource TextWhite}"
                                    FontSize="17"
                                    FontAttributes="Bold" />
-                            <Label Text="Écogestes validés · 7 derniers jours"
+                            <Label Text="Écogestes validés · 8 dernières semaines"
                                    TextColor="{StaticResource TextGray}"
                                    FontSize="11" />
                         </VerticalStackLayout>
@@ -103,19 +103,19 @@
                                 StrokeShape="RoundRectangle 14"
                                 Padding="9,5"
                                 VerticalOptions="Center">
-                            <Label Text="{Binding CompletedActions, StringFormat='{0} au total'}"
+                            <Label Text="{Binding CompletedActions, StringFormat='{0} · 30 j'}"
                                    TextColor="{StaticResource PrimaryGreen}"
                                    FontSize="11"
                                    FontAttributes="Bold" />
                         </Border>
                     </Grid>
                     <HorizontalStackLayout BindableLayout.ItemsSource="{Binding WeeklyActivity}"
-                                           HorizontalOptions="Fill"
+                                           HorizontalOptions="Center"
                                            Spacing="0"
-                                           HeightRequest="105">
+                                           HeightRequest="116">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="viewModels:WeeklyActivity">
-                                <VerticalStackLayout WidthRequest="46"
+                                <VerticalStackLayout WidthRequest="30"
                                                      HorizontalOptions="Center"
                                                      VerticalOptions="End"
                                                      Spacing="5">
@@ -123,8 +123,8 @@
                                            TextColor="{StaticResource TextGray}"
                                            FontSize="10"
                                            HorizontalTextAlignment="Center" />
-                                    <Grid HeightRequest="58"
-                                          WidthRequest="22"
+                                    <Grid HeightRequest="68"
+                                          WidthRequest="18"
                                           VerticalOptions="End">
                                         <Border HeightRequest="{Binding BarHeight}"
                                                 BackgroundColor="{StaticResource PrimaryGreen}"
@@ -143,6 +143,44 @@
                 </VerticalStackLayout>
             </Border>
 
+            <Border BackgroundColor="{StaticResource CardRaised}"
+                    Stroke="{StaticResource PrimaryGreen}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 22"
+                    Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="10">
+                        <VerticalStackLayout Spacing="3">
+                            <Label Text="Taux de réussite"
+                                   TextColor="{StaticResource TextWhite}"
+                                   FontSize="16"
+                                   FontAttributes="Bold" />
+                            <Label Text="Sur les 30 derniers jours"
+                                   TextColor="{StaticResource TextGray}"
+                                   FontSize="11" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1"
+                               Text="{Binding SuccessRateLabel}"
+                               TextColor="{StaticResource SecondaryBlue}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               VerticalTextAlignment="Center" />
+                    </Grid>
+                    <ProgressBar Progress="{Binding SuccessProgress}"
+                                 ProgressColor="{StaticResource PrimaryGreen}"
+                                 BackgroundColor="{StaticResource BorderColor}"
+                                 HeightRequest="8" />
+                    <Label Text="{Binding RecentActivityLabel}"
+                           TextColor="{StaticResource TextGray}"
+                           FontSize="11" />
+                    <Label IsVisible="{Binding HasNoHabits}"
+                           Text="Ajoutez une habitude pour commencer à suivre votre progression."
+                           TextColor="{StaticResource TextGray}"
+                           FontSize="11" />
+                </VerticalStackLayout>
+            </Border>
+
             <Grid ColumnDefinitions="*,*"
                   ColumnSpacing="12">
                 <Border BackgroundColor="{StaticResource CardBackground}"
@@ -158,7 +196,7 @@
                                TextColor="{StaticResource TextWhite}"
                                FontSize="19"
                                FontAttributes="Bold" />
-                        <Label Text="CO₂ économisé"
+                        <Label Text="CO₂ économisé au total"
                                TextColor="{StaticResource TextGray}"
                                FontSize="11" />
                     </VerticalStackLayout>

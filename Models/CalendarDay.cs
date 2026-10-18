@@ -9,15 +9,18 @@ public sealed class CalendarDay : INotifyPropertyChanged
     private bool _isSelected;
     private bool _hasCompletions;
 
-    public CalendarDay(DateTime date, bool isCurrentMonth)
+    public CalendarDay(DateTime date, bool isCurrentMonth, int columnIndex)
     {
         Date = date.Date;
         IsCurrentMonth = isCurrentMonth;
+        ColumnIndex = columnIndex;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public DateTime Date { get; }
+
+    public int ColumnIndex { get; }
 
     public string DayNumber => IsCurrentMonth ? Date.Day.ToString() : string.Empty;
 

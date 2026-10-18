@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using HabitDaily.Services;
+using HabitDaily.Views;
 using SQLite;
 
 namespace HabitDaily.ViewModels;
@@ -15,8 +16,16 @@ public sealed class ProfileViewModel : BaseViewModel
     private int _habitCount;
     private double _totalCo2Saved;
     private bool _isBusy;
+    private bool _isLoggingOut;
+
+    public ProfileViewModel()
+    {
+        LogoutCommand = new Command(async () => await LogoutAsync(), () => !IsBusy && !_isLoggingOut);
+    }
 
     public ObservableCollection<ProfileWeekDay> WeekDays { get; } = new();
+
+    public Command LogoutCommand { get; }
 
     public string FullName
     {
@@ -69,7 +78,13 @@ public sealed class ProfileViewModel : BaseViewModel
     public bool IsBusy
     {
         get => _isBusy;
-        private set => SetProperty(ref _isBusy, value);
+        private set
+        {
+            if (!SetProperty(ref _isBusy, value))
+                return;
+
+            LogoutCommand.ChangeCanExecute();
+        }
     }
 
     public async Task LoadAsync()
@@ -115,6 +130,33 @@ public sealed class ProfileViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    private async Task LogoutAsync()
+    {
+        if (IsBusy || _isLoggingOut)
+            return;
+
+        var confirmed = await CurrentPage.DisplayAlertAsync(
+            "Déconnexion",
+            "Êtes-vous sûr de vouloir vous déconnecter ?",
+            "Oui",
+            "Annuler");
+        if (!confirmed)
+            return;
+
+        _isLoggingOut = true;
+        LogoutCommand.ChangeCanExecute();
+        try
+        {
+            DatabaseService.ClearCurrentUser();
+            SetRootPage(new NavigationPage(new LoginPage()));
+        }
+        finally
+        {
+            _isLoggingOut = false;
+            LogoutCommand.ChangeCanExecute();
         }
     }
 
