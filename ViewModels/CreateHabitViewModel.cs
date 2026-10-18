@@ -21,11 +21,11 @@ public class CreateHabitViewModel : BaseViewModel
     {
         AvailableColors = new ObservableCollection<HabitColorOption>
         {
-            new("Vert", "#00E676"),
-            new("Bleu", "#29B6F6"),
-            new("Orange", "#FFB74D"),
-            new("Rose", "#F06292"),
-            new("Violet", "#BA68C8")
+            new("Vert", "#166718"),
+            new("Bleu", "#0d638b"),
+            new("Orange", "#df6100"),
+            new("Rose", "#c8104d"),
+            new("Violet", "#361987")
         };
 
         AvailableIcons = new ObservableCollection<HabitIconOption>
@@ -178,7 +178,7 @@ public class CreateHabitViewModel : BaseViewModel
         IsSaving = true;
         try
         {
-            var user = await DatabaseService.GetUserAsync();
+            var user = await DatabaseService.GetCurrentUserAsync();
             if (user == null)
             {
                 await CurrentPage.DisplayAlertAsync(

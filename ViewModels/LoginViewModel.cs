@@ -66,6 +66,7 @@ public class LoginViewModel : BaseViewModel
                 await DatabaseService.SaveUserAsync(user);
             }
 
+            DatabaseService.SetCurrentUser(user);
             SetRootPage(new AppShell());
         }
         catch (SQLite.SQLiteException)

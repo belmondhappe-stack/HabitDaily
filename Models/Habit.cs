@@ -32,11 +32,16 @@ namespace HabitDaily.Models
 
         public string Frequency { get; set; } = "Quotidienne";
 
+        public double Co2ReductionPerAction { get; set; } = 0.2;
+
         public string ReminderTime { get; set; } = "08:00";
 
         public bool IsReminderActive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [Ignore]
+        public int CurrentStreak { get; set; }
 
         [Ignore]
         public bool IsCompletedToday

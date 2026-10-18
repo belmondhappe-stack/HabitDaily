@@ -17,16 +17,6 @@ public partial class DashboardPage : ContentPage
         if (_viewModel == null)
             return;
 
-        try
-        {
-            await _viewModel.LoadSavedHabitsAsync();
-        }
-        catch (SQLite.SQLiteException)
-        {
-            await DisplayAlertAsync(
-                "Données indisponibles",
-                "Impossible de charger vos habitudes enregistrées.",
-                "OK");
-        }
+        await _viewModel.LoadDataAsync();
     }
 }

@@ -69,14 +69,11 @@ namespace HabitDaily.ViewModels
                 {
                     FullName = FullName.Trim(),
                     Email = Email.Trim(),
-                    PasswordHash = DatabaseService.HashPassword(Password),
-                    CurrentStreak = 1,
-                    BestStreak = 1,
-                    SuccessRate = 100.0,
-                    TotalCo2Saved = 0.5
+                    PasswordHash = DatabaseService.HashPassword(Password)
                 };
 
                 await DatabaseService.SaveUserAsync(newUser);
+                DatabaseService.SetCurrentUser(newUser);
 
                 await CurrentPage.DisplayAlertAsync("Succès", "Compte créé avec succès !", "OK");
                 SetRootPage(new AppShell());

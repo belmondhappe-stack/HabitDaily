@@ -101,54 +101,57 @@
         </VerticalStackLayout>
 
         <!-- Liste des habitudes -->
-        <CollectionView Grid.Row="1" ItemsSource="{Binding TodayHabits}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Habit">
-                    <Border BackgroundColor="{StaticResource CardBackground}"
-                            Stroke="{StaticResource BorderColor}"
-                            StrokeShape="RoundRectangle 12"
-                            Padding="12"
-                            Margin="0,0,0,10">
-                        <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
-                            <Label Grid.Column="0"
-                                   Text="{Binding IconGlyph}"
-                                   FontFamily="MaterialIcons"
-                                   TextColor="{Binding IconColor}"
-                                   FontSize="22"
-                                   VerticalOptions="Center"
-                                   Margin="0,0,12,0" />
+        <RefreshView Grid.Row="1"
+                     IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+                     Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding TodayHabits}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Habit">
+                        <Border BackgroundColor="{StaticResource CardBackground}"
+                                Stroke="{StaticResource BorderColor}"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="12"
+                                Margin="0,0,0,10">
+                            <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                                <Label Grid.Column="0"
+                                       Text="{Binding IconGlyph}"
+                                       FontFamily="MaterialIcons"
+                                       TextColor="{Binding IconColor}"
+                                       FontSize="22"
+                                       VerticalOptions="Center"
+                                       Margin="0,0,12,0" />
 
-                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                <Label Text="{Binding Title}" TextColor="{StaticResource TextWhite}" FontSize="16" FontAttributes="Bold" />
-                                <Label Text="{Binding Subtitle}" TextColor="{StaticResource TextGray}" FontSize="12" />
-                            </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Title}" TextColor="{StaticResource TextWhite}" FontSize="16" FontAttributes="Bold" />
+                                    <Label Text="{Binding Subtitle}" TextColor="{StaticResource TextGray}" FontSize="12" />
+                                </VerticalStackLayout>
 
-                            <!-- Bouton de validation interactif -->
-                            <Button Grid.Column="2"
-                                    Text="{x:Static constants:IconFont.Unchecked}"
-                                    FontFamily="MaterialIcons"
-                                    TextColor="{StaticResource TextMuted}"
-                                    BackgroundColor="{StaticResource CardBackground}"
-                                    CornerRadius="20"
-                                    WidthRequest="40"
-                                    HeightRequest="40"
-                                    Command="{Binding ToggleHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:DashboardViewModel}}}"
-                                    CommandParameter="{Binding .}">
-                                <Button.Triggers>
-                                    <DataTrigger TargetType="Button"
-                                                 Binding="{Binding IsCompletedToday}"
-                                                 Value="True">
-                                        <Setter Property="Text" Value="{x:Static constants:IconFont.Check}" />
-                                        <Setter Property="TextColor" Value="{StaticResource BackgroundDark}" />
-                                        <Setter Property="BackgroundColor" Value="{StaticResource PrimaryGreen}" />
-                                    </DataTrigger>
-                                </Button.Triggers>
-                            </Button>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                                <Button Grid.Column="2"
+                                        Text="{x:Static constants:IconFont.Unchecked}"
+                                        FontFamily="MaterialIcons"
+                                        TextColor="{StaticResource TextMuted}"
+                                        BackgroundColor="{StaticResource CardBackground}"
+                                        CornerRadius="20"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        Command="{Binding ToggleHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:DashboardViewModel}}}"
+                                        CommandParameter="{Binding .}">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                     Binding="{Binding IsCompletedToday}"
+                                                     Value="True">
+                                            <Setter Property="Text" Value="{x:Static constants:IconFont.Check}" />
+                                            <Setter Property="TextColor" Value="{StaticResource BackgroundDark}" />
+                                            <Setter Property="BackgroundColor" Value="{StaticResource PrimaryGreen}" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
 
     </Grid>
 </ContentPage>
