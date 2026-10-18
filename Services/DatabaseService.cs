@@ -138,6 +138,28 @@ namespace HabitDaily.Services
             });
         }
 
+        public static async Task<List<HabitLogDetails>> GetHabitLogsByDateRangeAsync(
+            int userId,
+            DateTime startDate,
+            DateTime endDateExclusive)
+        {
+            if (endDateExclusive <= startDate)
+                throw new ArgumentOutOfRangeException(nameof(endDateExclusive), "La date de fin doit être après la date de début.");
+
+            var database = await GetDatabaseAsync();
+            return await database.QueryAsync<HabitLogDetails>(
+                "SELECT HabitLogs.Id, HabitLogs.HabitId, HabitLogs.LogDate, HabitLogs.IsCompleted, " +
+                "Habits.Title AS HabitTitle, Habits.IconName, Habits.HexColor, Habits.Co2ReductionPerAction " +
+                "FROM HabitLogs " +
+                "INNER JOIN Habits ON Habits.Id = HabitLogs.HabitId " +
+                "WHERE Habits.UserId = ? AND HabitLogs.IsCompleted = 1 " +
+                "AND HabitLogs.LogDate >= ? AND HabitLogs.LogDate < ? " +
+                "ORDER BY HabitLogs.LogDate, Habits.Title",
+                userId,
+                startDate.Date,
+                endDateExclusive.Date);
+        }
+
         public static async Task<int> SaveHabitAsync(Habit habit)
         {
             ArgumentNullException.ThrowIfNull(habit);

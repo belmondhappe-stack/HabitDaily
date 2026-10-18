@@ -1,10 +1,5 @@
 namespace HabitDaily.Views;
 
-public class CalendarPage : ContentPage
-{
-    public CalendarPage() => Content = PlaceholderPageContent.Create("Calendrier", Constants.IconFont.Calendar);
-}
-
 public class StatsPage : ContentPage
 {
     public StatsPage() => Content = PlaceholderPageContent.Create("Statistiques", Constants.IconFont.Stats);
