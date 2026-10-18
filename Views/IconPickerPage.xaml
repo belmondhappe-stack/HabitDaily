@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:HabitDaily.ViewModels"
+             xmlns:viewModels="clr-namespace:HabitDaily.ViewModels"
+             x:Class="HabitDaily.Views.IconPickerPage"
+             x:DataType="viewModels:IconPickerViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <Grid Padding="20"
+          RowDefinitions="Auto,Auto,Auto,*"
+          RowSpacing="14">
+        <Grid ColumnDefinitions="*,Auto">
+            <VerticalStackLayout Spacing="3">
+                <Label Text="Catalogue d’icônes"
+                       TextColor="{StaticResource TextWhite}"
+                       FontSize="22"
+                       FontAttributes="Bold" />
+                <Label Text="Choisissez le symbole qui représente votre habitude."
+                       TextColor="{StaticResource TextGray}"
+                       FontSize="12" />
+            </VerticalStackLayout>
+            <Button Grid.Column="1"
+                    Text="Fermer"
+                    TextColor="{StaticResource PrimaryGreen}"
+                    BackgroundColor="{StaticResource CardBackground}"
+                    Command="{Binding CancelCommand}" />
+        </Grid>
+
+        <Border Grid.Row="1"
+                BackgroundColor="{StaticResource CardBackground}"
+                Stroke="{StaticResource BorderColor}"
+                StrokeShape="RoundRectangle 12"
+                Padding="10,2">
+            <SearchBar Placeholder="Rechercher une icône"
+                       PlaceholderColor="{StaticResource TextMuted}"
+                       TextColor="{StaticResource TextWhite}"
+                       CancelButtonColor="{StaticResource PrimaryGreen}"
+                       BackgroundColor="Transparent"
+                       Text="{Binding SearchText, Mode=TwoWay}" />
+        </Border>
+
+        <Border Grid.Row="2"
+                BackgroundColor="{StaticResource CardBackground}"
+                Stroke="{StaticResource BorderColor}"
+                StrokeShape="RoundRectangle 12"
+                Padding="10,2">
+            <Picker Title="Toutes les catégories"
+                    TitleColor="{StaticResource TextMuted}"
+                    TextColor="{StaticResource TextWhite}"
+                    ItemsSource="{Binding CategoryFilters}"
+                    SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+        </Border>
+
+        <CollectionView Grid.Row="3"
+                        ItemsSource="{Binding Categories}"
+                        IsGrouped="True"
+                        SelectionMode="None"
+                        ItemsLayout="VerticalGrid, 4">
+            <CollectionView.EmptyView>
+                <Label Text="Aucune icône ne correspond à cette recherche."
+                       TextColor="{StaticResource TextGray}"
+                       HorizontalTextAlignment="Center"
+                       VerticalOptions="Center" />
+            </CollectionView.EmptyView>
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate x:DataType="models:HabitIconCategory">
+                    <Label Text="{Binding Name}"
+                           TextColor="{StaticResource PrimaryGreen}"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           Padding="2,14,0,6" />
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:HabitIconOption">
+                    <Button Text="{Binding Glyph}"
+                            FontFamily="MaterialIcons"
+                            FontSize="24"
+                            TextColor="{StaticResource PrimaryGreen}"
+                            BackgroundColor="{StaticResource CardBackground}"
+                            CornerRadius="14"
+                            HeightRequest="64"
+                            Margin="4"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:IconPickerViewModel}}, Path=SelectIconCommand}"
+                            CommandParameter="{Binding .}"
+                            SemanticProperties.Description="{Binding Label}" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

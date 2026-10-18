@@ -4,6 +4,7 @@
              xmlns:constants="clr-namespace:HabitDaily.Constants"
              xmlns:models="clr-namespace:HabitDaily.ViewModels"
              xmlns:viewModels="clr-namespace:HabitDaily.ViewModels"
+             xmlns:controls="clr-namespace:HabitDaily.Views.Controls"
              x:Class="HabitDaily.Views.CreateHabitPage"
              x:DataType="viewModels:CreateHabitViewModel"
              Shell.NavBarIsVisible="False"
@@ -86,10 +87,19 @@
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Choisir une couleur"
-                           TextColor="{StaticResource TextWhite}"
-                           FontSize="14"
-                           FontAttributes="Bold" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Couleur de l’habitude"
+                               TextColor="{StaticResource TextWhite}"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="{Binding SelectedColorValue}"
+                               TextColor="{StaticResource TextGray}"
+                               FontSize="12"
+                               VerticalOptions="Center" />
+                    </Grid>
+
                     <HorizontalStackLayout BindableLayout.ItemsSource="{Binding AvailableColors}"
                                            Spacing="14">
                         <BindableLayout.ItemTemplate>
@@ -119,47 +129,60 @@
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                     </HorizontalStackLayout>
+
+                    <Border Stroke="{StaticResource BorderColor}"
+                            StrokeShape="RoundRectangle 12"
+                            StrokeThickness="1"
+                            Padding="2">
+                        <controls:ColorPickerControl Hue="0"
+                                                      SelectedColor="{Binding PickerColor, Mode=TwoWay}" />
+                    </Border>
+                    <Label Text="Touchez ou faites glisser pour choisir la teinte, la saturation et la luminosité."
+                           TextColor="{StaticResource TextGray}"
+                           FontSize="11" />
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Choisir une icône"
+                    <Label Text="Icône de l’habitude"
                            TextColor="{StaticResource TextWhite}"
                            FontSize="14"
                            FontAttributes="Bold" />
-                    <HorizontalStackLayout BindableLayout.ItemsSource="{Binding AvailableIcons}"
-                                           Spacing="8"
-                                           HorizontalOptions="Fill">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate x:DataType="models:HabitIconOption">
-                                <VerticalStackLayout Spacing="3" WidthRequest="52">
-                                    <Button Text="{Binding Glyph}"
-                                            FontFamily="MaterialIcons"
-                                            FontSize="20"
-                                            WidthRequest="44"
-                                            HeightRequest="44"
-                                            Padding="0"
-                                            BackgroundColor="{StaticResource CardBackground}"
-                                            TextColor="{StaticResource TextGray}"
-                                            Command="{Binding SelectIconCommand, Source={RelativeSource AncestorType={x:Type viewModels:CreateHabitViewModel}}}"
-                                            CommandParameter="{Binding .}"
-                                            SemanticProperties.Description="{Binding Label}">
-                                        <Button.Triggers>
-                                            <DataTrigger TargetType="Button"
-                                                         Binding="{Binding IsSelected}"
-                                                         Value="True">
-                                                <Setter Property="BackgroundColor" Value="{StaticResource PrimaryGreen}" />
-                                                <Setter Property="TextColor" Value="{StaticResource BackgroundDark}" />
-                                            </DataTrigger>
-                                        </Button.Triggers>
-                                    </Button>
-                                    <Label Text="{Binding Label}"
-                                           TextColor="{StaticResource TextGray}"
-                                           FontSize="10"
-                                           HorizontalTextAlignment="Center" />
-                                </VerticalStackLayout>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </HorizontalStackLayout>
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource BorderColor}"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="12">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Border WidthRequest="44"
+                                    HeightRequest="44"
+                                    BackgroundColor="{Binding SelectedColor.Color}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12">
+                                <Label Text="{Binding SelectedIcon.Glyph}"
+                                       FontFamily="MaterialIcons"
+                                       FontSize="22"
+                                       TextColor="{StaticResource BackgroundDark}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1"
+                                                 VerticalOptions="Center"
+                                                 Spacing="2">
+                                <Label Text="{Binding SelectedIcon.Label}"
+                                       TextColor="{StaticResource TextWhite}"
+                                       FontAttributes="Bold"
+                                       FontSize="13" />
+                                <Label Text="{Binding SelectedIcon.Category}"
+                                       TextColor="{StaticResource TextGray}"
+                                       FontSize="11" />
+                            </VerticalStackLayout>
+                            <Button Grid.Column="2"
+                                    Text="Parcourir"
+                                    TextColor="{StaticResource PrimaryGreen}"
+                                    BackgroundColor="{StaticResource BackgroundDark}"
+                                    CornerRadius="10"
+                                    Command="{Binding ChooseIconCommand}" />
+                        </Grid>
+                    </Border>
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="8">

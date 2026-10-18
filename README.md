@@ -7,6 +7,10 @@ HabitDaily est une application mobile .NET MAUI de suivi d'habitudes écologique
 - .NET MAUI
 - SQLite (`sqlite-net-pcl`)
 
+## Création d'habitudes
+
+L'écran de création propose un catalogue d'icônes classées par catégorie et recherchables, ainsi qu'un sélecteur de couleurs HSL avec aperçu en direct.
+
 ## Structure
 
 - `Models/` : modèles de données

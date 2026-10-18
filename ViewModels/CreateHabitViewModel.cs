@@ -4,6 +4,7 @@ using System.Windows.Input;
 using HabitDaily.Constants;
 using HabitDaily.Models;
 using HabitDaily.Services;
+using HabitDaily.Views;
 using SQLite;
 
 namespace HabitDaily.ViewModels;
@@ -14,6 +15,7 @@ public class CreateHabitViewModel : BaseViewModel
     private string _selectedFrequency = "Quotidienne";
     private HabitColorOption _selectedColor;
     private HabitIconOption _selectedIcon;
+    private Color _pickerColor = Color.FromArgb("#166718");
     private bool _hasManuallySelectedIcon;
     private bool _isSaving;
 
@@ -21,21 +23,14 @@ public class CreateHabitViewModel : BaseViewModel
     {
         AvailableColors = new ObservableCollection<HabitColorOption>
         {
-            new("Vert", "#166718"),
-            new("Bleu", "#0d638b"),
-            new("Orange", "#df6100"),
-            new("Rose", "#c8104d"),
-            new("Violet", "#361987")
+            new("Vert", "#00E676"),
+            new("Bleu", "#29B6F6"),
+            new("Orange", "#FFB74D"),
+            new("Rose", "#F06292"),
+            new("Violet", "#BA68C8")
         };
 
-        AvailableIcons = new ObservableCollection<HabitIconOption>
-        {
-            new("leaf", "Nature", IconFont.Leaf),
-            new("book", "Étude", IconFont.Book),
-            new("alarm", "Réveil", IconFont.Alarm),
-            new("water", "Eau", IconFont.WaterDrop),
-            new("power", "Énergie", IconFont.Power)
-        };
+        AvailableIcons = CreateIconCatalog();
 
         Frequencies = new ObservableCollection<string>
         {
@@ -51,6 +46,7 @@ public class CreateHabitViewModel : BaseViewModel
         _selectedIcon.IsSelected = true;
 
         SelectColorCommand = new Command<string>(SelectColor);
+        ChooseIconCommand = new Command(async () => await ChooseIconAsync());
         SelectIconCommand = new Command<HabitIconOption>(SelectIcon);
         CancelCommand = new Command(async () => await Shell.Current.GoToAsync(".."));
         SaveCommand = new Command(async () => await SaveAsync(), CanSave);
@@ -58,6 +54,16 @@ public class CreateHabitViewModel : BaseViewModel
 
     public ObservableCollection<HabitColorOption> AvailableColors { get; }
     public ObservableCollection<HabitIconOption> AvailableIcons { get; }
+    public IReadOnlyList<string> IconCategories { get; } = new[]
+    {
+        "Nature & écologie",
+        "Alimentation",
+        "Travail & études",
+        "Maison & tâches",
+        "Déplacements",
+        "Bien-être",
+        "Loisirs & quotidien"
+    };
     public ObservableCollection<string> Frequencies { get; }
 
     public string Title
@@ -97,6 +103,18 @@ public class CreateHabitViewModel : BaseViewModel
 
     public string SelectedColorValue => SelectedColor.HexValue;
 
+    public Color PickerColor
+    {
+        get => _pickerColor;
+        set
+        {
+            if (!SetProperty(ref _pickerColor, value))
+                return;
+
+            SelectColorFromPicker(value);
+        }
+    }
+
     public HabitIconOption SelectedIcon
     {
         get => _selectedIcon;
@@ -120,6 +138,7 @@ public class CreateHabitViewModel : BaseViewModel
 
     public ICommand SelectColorCommand { get; }
     public ICommand SelectIconCommand { get; }
+    public ICommand ChooseIconCommand { get; }
     public ICommand CancelCommand { get; }
     public Command SaveCommand { get; }
 
@@ -134,10 +153,20 @@ public class CreateHabitViewModel : BaseViewModel
         if (color == null)
             return;
 
-        foreach (var option in AvailableColors)
-            option.IsSelected = ReferenceEquals(option, color);
+        PickerColor = color.Color;
+    }
 
-        SelectedColor = color;
+    private void SelectColorFromPicker(Color color)
+    {
+        var hexValue = $"#{(byte)Math.Round(color.Red * 255):X2}{(byte)Math.Round(color.Green * 255):X2}{(byte)Math.Round(color.Blue * 255):X2}";
+        var preset = AvailableColors.FirstOrDefault(option =>
+            string.Equals(option.HexValue, hexValue, StringComparison.OrdinalIgnoreCase));
+        var selectedColor = preset ?? new HabitColorOption("Personnalisée", hexValue);
+
+        foreach (var option in AvailableColors)
+            option.IsSelected = ReferenceEquals(option, preset);
+
+        SelectedColor = selectedColor;
     }
 
     private void SelectIcon(HabitIconOption? icon)
@@ -147,6 +176,15 @@ public class CreateHabitViewModel : BaseViewModel
 
         _hasManuallySelectedIcon = true;
         SetSelectedIcon(icon);
+    }
+
+    private async Task ChooseIconAsync()
+    {
+        var picker = new IconPickerPage(AvailableIcons, SelectedIcon);
+        await Shell.Current.Navigation.PushModalAsync(picker);
+        var selectedIcon = await picker.Selection;
+        if (selectedIcon != null)
+            SelectIcon(selectedIcon);
     }
 
     private void SelectIconByTitle(string title)
@@ -162,6 +200,66 @@ public class CreateHabitViewModel : BaseViewModel
             option.IsSelected = ReferenceEquals(option, icon);
 
         SelectedIcon = icon;
+    }
+
+    private static ObservableCollection<HabitIconOption> CreateIconCatalog()
+    {
+        var icons = new[]
+        {
+            new HabitIconOption("leaf", "Feuille", IconFont.Leaf, "Nature & écologie"),
+            new HabitIconOption("eco", "Écologie", IconFont.Leaf, "Nature & écologie"),
+            new HabitIconOption("recycling", "Recyclage", IconFont.Recycling, "Nature & écologie"),
+            new HabitIconOption("compost", "Compost", IconFont.Compost, "Nature & écologie"),
+            new HabitIconOption("energy_savings_leaf", "Économie d'énergie", IconFont.EnergySavingsLeaf, "Nature & écologie"),
+            new HabitIconOption("electric_bolt", "Électricité", IconFont.ElectricBolt, "Nature & écologie"),
+            new HabitIconOption("solar_power", "Solaire", IconFont.SolarPower, "Nature & écologie"),
+            new HabitIconOption("park", "Parc", IconFont.Park, "Nature & écologie"),
+            new HabitIconOption("forest", "Forêt", IconFont.Forest, "Nature & écologie"),
+            new HabitIconOption("local_florist", "Fleurs", IconFont.LocalFlorist, "Nature & écologie"),
+            new HabitIconOption("restaurant", "Repas", IconFont.Restaurant, "Alimentation"),
+            new HabitIconOption("restaurant_menu", "Menu", IconFont.Restaurant, "Alimentation"),
+            new HabitIconOption("lunch_dining", "Déjeuner", IconFont.LunchDining, "Alimentation"),
+            new HabitIconOption("bakery_dining", "Boulangerie", IconFont.BakeryDining, "Alimentation"),
+            new HabitIconOption("egg", "Cuisine", IconFont.Egg, "Alimentation"),
+            new HabitIconOption("local_cafe", "Boisson chaude", IconFont.LocalCafe, "Alimentation"),
+            new HabitIconOption("local_drink", "Hydratation", IconFont.LocalDrink, "Alimentation"),
+            new HabitIconOption("local_grocery_store", "Courses", IconFont.LocalGroceryStore, "Alimentation"),
+            new HabitIconOption("book", "Lecture", IconFont.Book, "Travail & études"),
+            new HabitIconOption("menu_book", "Étude", IconFont.Book, "Travail & études"),
+            new HabitIconOption("computer", "Ordinateur", IconFont.Computer, "Travail & études"),
+            new HabitIconOption("assignment", "Devoirs", IconFont.Assignment, "Travail & études"),
+            new HabitIconOption("calculate", "Calcul", IconFont.Calculate, "Travail & études"),
+            new HabitIconOption("engineering", "Projet", IconFont.Engineering, "Travail & études"),
+            new HabitIconOption("backpack", "École", IconFont.Backpack, "Travail & études"),
+            new HabitIconOption("home", "Maison", IconFont.Home, "Maison & tâches"),
+            new HabitIconOption("cleaning_services", "Ménage", IconFont.CleaningServices, "Maison & tâches"),
+            new HabitIconOption("local_laundry_service", "Lessive", IconFont.LocalLaundryService, "Maison & tâches"),
+            new HabitIconOption("kitchen", "Cuisine", IconFont.Kitchen, "Maison & tâches"),
+            new HabitIconOption("bed", "Sommeil", IconFont.Bed, "Maison & tâches"),
+            new HabitIconOption("brush", "Nettoyage", IconFont.Brush, "Maison & tâches"),
+            new HabitIconOption("alarm", "Réveil", IconFont.Alarm, "Maison & tâches"),
+            new HabitIconOption("directions_walk", "Marche", IconFont.DirectionsWalk, "Déplacements"),
+            new HabitIconOption("directions_bike", "Vélo", IconFont.DirectionsBike, "Déplacements"),
+            new HabitIconOption("directions_bus", "Bus", IconFont.DirectionsBus, "Déplacements"),
+            new HabitIconOption("directions_car", "Voiture", IconFont.DirectionsCar, "Déplacements"),
+            new HabitIconOption("train", "Train", IconFont.Train, "Déplacements"),
+            new HabitIconOption("electric_car", "Voiture électrique", IconFont.ElectricCar, "Déplacements"),
+            new HabitIconOption("directions_run", "Course", IconFont.DirectionsRun, "Bien-être"),
+            new HabitIconOption("fitness_center", "Sport", IconFont.FitnessCenter, "Bien-être"),
+            new HabitIconOption("self_improvement", "Méditation", IconFont.SelfImprovement, "Bien-être"),
+            new HabitIconOption("medication", "Santé", IconFont.Medication, "Bien-être"),
+            new HabitIconOption("favorite", "Bien-être", IconFont.Favorite, "Bien-être"),
+            new HabitIconOption("shower", "Douche", IconFont.Shower, "Bien-être"),
+            new HabitIconOption("pets", "Animaux", IconFont.Pets, "Loisirs & quotidien"),
+            new HabitIconOption("lightbulb", "Idée", IconFont.Lightbulb, "Loisirs & quotidien"),
+            new HabitIconOption("shopping_cart", "Achats", IconFont.ShoppingCart, "Loisirs & quotidien"),
+            new HabitIconOption("savings", "Économies", IconFont.Savings, "Loisirs & quotidien"),
+            new HabitIconOption("power", "Énergie", IconFont.Power, "Loisirs & quotidien"),
+            new HabitIconOption("spa", "Détente", IconFont.Spa, "Loisirs & quotidien"),
+            new HabitIconOption("water_drop", "Eau", IconFont.WaterDrop, "Loisirs & quotidien")
+        };
+
+        return new ObservableCollection<HabitIconOption>(icons);
     }
 
     private async Task SaveAsync()
@@ -251,11 +349,12 @@ public sealed class HabitIconOption : INotifyPropertyChanged
 {
     private bool _isSelected;
 
-    public HabitIconOption(string key, string label, string glyph)
+    public HabitIconOption(string key, string label, string glyph, string category = "")
     {
         Key = key;
         Label = label;
         Glyph = glyph;
+        Category = category;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -263,6 +362,7 @@ public sealed class HabitIconOption : INotifyPropertyChanged
     public string Key { get; }
     public string Label { get; }
     public string Glyph { get; }
+    public string Category { get; }
 
     public bool IsSelected
     {
