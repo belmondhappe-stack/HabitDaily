@@ -2,10 +2,6 @@
 
 HabitDaily est une application mobile .NET MAUI de suivi d'habitudes écologiques.
 
-## État du projet
-
-Le frontend est en cours de correction par l'enseignant. Les écrans et fonctionnalités concernés ne sont donc pas présentés comme finalisés.
-
 ## Technologies
 
 - .NET MAUI
