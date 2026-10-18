@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace HabitDaily.Models;
@@ -18,7 +19,7 @@ public sealed class CalendarDay : INotifyPropertyChanged
 
     public DateTime Date { get; }
 
-    public string DayNumber => Date.Day.ToString();
+    public string DayNumber => IsCurrentMonth ? Date.Day.ToString() : string.Empty;
 
     public bool IsCurrentMonth { get; }
 
@@ -31,6 +32,7 @@ public sealed class CalendarDay : INotifyPropertyChanged
             {
                 OnPropertyChanged(nameof(BackgroundColor));
                 OnPropertyChanged(nameof(TextColor));
+                OnPropertyChanged(nameof(StrokeColor));
                 OnPropertyChanged(nameof(IndicatorColor));
                 OnPropertyChanged(nameof(AccessibilityDescription));
             }
@@ -43,25 +45,37 @@ public sealed class CalendarDay : INotifyPropertyChanged
         set
         {
             if (SetProperty(ref _hasCompletions, value))
+            {
+                OnPropertyChanged(nameof(BackgroundColor));
+                OnPropertyChanged(nameof(TextColor));
                 OnPropertyChanged(nameof(AccessibilityDescription));
+            }
         }
     }
 
-    public Color BackgroundColor => IsSelected
-        ? Color.FromArgb("#00E676")
-        : Color.FromArgb("#1E1E1E");
+    public Color BackgroundColor => !IsCurrentMonth
+        ? Colors.Transparent
+        : HasCompletions
+            ? Color.FromArgb("#00C978")
+            : Color.FromArgb("#3B3B3B");
 
     public Color TextColor => !IsCurrentMonth
-        ? Color.FromArgb("#757575")
-        : IsSelected
-            ? Color.FromArgb("#121212")
+        ? Colors.Transparent
+        : HasCompletions
+            ? Color.FromArgb("#101A14")
             : Color.FromArgb("#FFFFFF");
 
-    public Color IndicatorColor => IsSelected
-        ? Color.FromArgb("#121212")
+    public Color StrokeColor => IsSelected
+        ? Color.FromArgb("#FFFFFF")
+        : Colors.Transparent;
+
+    public Color IndicatorColor => HasCompletions
+        ? Color.FromArgb("#101A14")
         : Color.FromArgb("#00E676");
 
-    public string AccessibilityDescription => $"{Date:dd MMMM yyyy}" +
+    public string AccessibilityDescription => !IsCurrentMonth
+        ? "Jour hors du mois affiché"
+        : $"{Date.ToString("dddd d MMMM yyyy", CultureInfo.GetCultureInfo("fr-FR"))}" +
         (HasCompletions ? ", écogeste(s) validé(s)" : string.Empty) +
         (IsSelected ? ", date sélectionnée" : string.Empty);
 

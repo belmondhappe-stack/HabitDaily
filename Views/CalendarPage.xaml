@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:constants="clr-namespace:HabitDaily.Constants"
              xmlns:models="clr-namespace:HabitDaily.Models"
              xmlns:viewModels="clr-namespace:HabitDaily.ViewModels"
              x:Class="HabitDaily.Views.CalendarPage"
@@ -8,228 +9,275 @@
              Title="Calendrier"
              BackgroundColor="{StaticResource BackgroundDark}">
 
-    <Grid Padding="16"
-          RowDefinitions="Auto,Auto,Auto,252,Auto,Auto,*"
-          RowSpacing="12">
-        <Grid ColumnDefinitions="*,Auto">
-            <VerticalStackLayout Spacing="2">
-                <Label Text="Historique des écogestes"
-                       TextColor="{StaticResource TextWhite}"
-                       FontSize="21"
-                       FontAttributes="Bold" />
-                <Label Text="Vos gestes, jour après jour."
-                       TextColor="{StaticResource TextGray}"
-                       FontSize="12" />
-            </VerticalStackLayout>
-            <Button Grid.Column="1"
-                    Text="Aujourd’hui"
-                    TextColor="{StaticResource BackgroundDark}"
-                    BackgroundColor="{StaticResource PrimaryGreen}"
-                    FontAttributes="Bold"
-                    CornerRadius="10"
-                    Padding="12,0"
-                    Command="{Binding SelectTodayCommand}" />
-        </Grid>
+    <RefreshView IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+                 Command="{Binding RefreshCommand}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,14,16,26"
+                                 Spacing="16"
+                                 HorizontalOptions="Center"
+                                 MaximumWidthRequest="520">
+                <Grid ColumnDefinitions="*,Auto,Auto"
+                      ColumnSpacing="8">
+                    <Label Text="Calendrier"
+                           TextColor="{StaticResource TextWhite}"
+                           FontSize="23"
+                           FontAttributes="Bold"
+                           VerticalTextAlignment="Center" />
+                    <Button Grid.Column="1"
+                            Text="{x:Static constants:IconFont.Notifications}"
+                            FontFamily="MaterialIcons"
+                            FontSize="20"
+                            TextColor="{StaticResource TextWhite}"
+                            BackgroundColor="{StaticResource CardRaised}"
+                            BorderColor="{StaticResource BorderColor}"
+                            BorderWidth="1"
+                            CornerRadius="22"
+                            WidthRequest="44"
+                            HeightRequest="44"
+                            Padding="0"
+                            Clicked="OnNotificationsClicked"
+                            SemanticProperties.Description="Notifications" />
+                    <Button Grid.Column="2"
+                            Text="Aujourd’hui"
+                            TextColor="{StaticResource PrimaryGreen}"
+                            BackgroundColor="{StaticResource CardBackground}"
+                            BorderColor="{StaticResource BorderColor}"
+                            BorderWidth="1"
+                            FontAttributes="Bold"
+                            CornerRadius="14"
+                            Padding="12,0"
+                            HeightRequest="44"
+                            Command="{Binding SelectTodayCommand}" />
+                </Grid>
 
-        <Grid Grid.Row="1"
-              ColumnDefinitions="Auto,*,Auto"
-              ColumnSpacing="12">
-            <Button Text="‹"
-                    FontSize="24"
-                    TextColor="{StaticResource PrimaryGreen}"
-                    BackgroundColor="{StaticResource CardBackground}"
-                    CornerRadius="12"
-                    WidthRequest="44"
-                    HeightRequest="42"
-                    Command="{Binding PreviousMonthCommand}"
-                    SemanticProperties.Description="Mois précédent" />
-            <Label Grid.Column="1"
-                   Text="{Binding DisplayedMonthLabel}"
-                   TextColor="{StaticResource TextWhite}"
-                   FontSize="18"
-                   FontAttributes="Bold"
-                   HorizontalTextAlignment="Center"
-                   VerticalTextAlignment="Center" />
-            <Button Grid.Column="2"
-                    Text="›"
-                    FontSize="24"
-                    TextColor="{StaticResource PrimaryGreen}"
-                    BackgroundColor="{StaticResource CardBackground}"
-                    CornerRadius="12"
-                    WidthRequest="44"
-                    HeightRequest="42"
-                    Command="{Binding NextMonthCommand}"
-                    SemanticProperties.Description="Mois suivant" />
-        </Grid>
-
-        <Grid Grid.Row="2"
-              ColumnDefinitions="*,*,*,*,*,*,*"
-              ColumnSpacing="4">
-            <Label Text="Lun" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="11" />
-            <Label Grid.Column="1" Text="Mar" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="11" />
-            <Label Grid.Column="2" Text="Mer" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="11" />
-            <Label Grid.Column="3" Text="Jeu" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="11" />
-            <Label Grid.Column="4" Text="Ven" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="11" />
-            <Label Grid.Column="5" Text="Sam" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="11" />
-            <Label Grid.Column="6" Text="Dim" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="11" />
-        </Grid>
-
-        <CollectionView Grid.Row="3"
-                        AutomationId="CalendarMonthGrid"
-                        ItemsSource="{Binding CalendarDays}"
-                        SelectionMode="None"
-                        ItemsLayout="VerticalGrid, 7"
-                        HeightRequest="252">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:CalendarDay">
-                    <Border BackgroundColor="{Binding BackgroundColor}"
-                            Stroke="{StaticResource BorderColor}"
-                            StrokeShape="RoundRectangle 12"
-                            StrokeThickness="1"
-                            Margin="2"
-                            HeightRequest="38"
-                            SemanticProperties.Description="{Binding AccessibilityDescription}">
-                        <Grid RowDefinitions="*,Auto"
-                              RowSpacing="0"
-                              Padding="0,2">
-                            <Label Text="{Binding DayNumber}"
-                                   TextColor="{Binding TextColor}"
-                                   FontSize="13"
-                                   HorizontalTextAlignment="Center"
+                <Border BackgroundColor="{StaticResource CardRaised}"
+                        Stroke="{StaticResource BorderColor}"
+                        StrokeShape="RoundRectangle 24"
+                        Padding="14,12"
+                        HorizontalOptions="Center"
+                        MaximumWidthRequest="460">
+                    <Grid RowDefinitions="Auto,Auto,Auto"
+                          RowSpacing="8">
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              ColumnSpacing="10">
+                            <Button Text="‹"
+                                    FontSize="27"
+                                    TextColor="{StaticResource TextGray}"
+                                    BackgroundColor="Transparent"
+                                    Padding="0"
+                                    WidthRequest="38"
+                                    HeightRequest="38"
+                                    Command="{Binding PreviousMonthCommand}"
+                                    SemanticProperties.Description="Mois précédent" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding DisplayedMonthLabel}"
+                                   TextColor="{StaticResource TextWhite}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
                                    VerticalTextAlignment="Center" />
-                            <Ellipse Grid.Row="1"
-                                     Fill="{Binding IndicatorColor}"
-                                     WidthRequest="5"
-                                     HeightRequest="5"
-                                     HorizontalOptions="Center"
-                                     IsVisible="{Binding HasCompletions}" />
+                            <Button Grid.Column="2"
+                                    Text="›"
+                                    FontSize="27"
+                                    TextColor="{StaticResource TextGray}"
+                                    BackgroundColor="Transparent"
+                                    Padding="0"
+                                    WidthRequest="38"
+                                    HeightRequest="38"
+                                    Command="{Binding NextMonthCommand}"
+                                    SemanticProperties.Description="Mois suivant" />
                         </Grid>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:CalendarViewModel}}, Path=SelectDayCommand}"
-                                CommandParameter="{Binding .}" />
-                        </Border.GestureRecognizers>
+
+                        <Grid Grid.Row="1"
+                              ColumnDefinitions="*,*,*,*,*,*,*"
+                              ColumnSpacing="2">
+                            <Label Text="L" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="12" />
+                            <Label Grid.Column="1" Text="M" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="12" />
+                            <Label Grid.Column="2" Text="M" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="12" />
+                            <Label Grid.Column="3" Text="J" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="12" />
+                            <Label Grid.Column="4" Text="V" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="12" />
+                            <Label Grid.Column="5" Text="S" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="12" />
+                            <Label Grid.Column="6" Text="D" TextColor="{StaticResource TextGray}" HorizontalTextAlignment="Center" FontSize="12" />
+                        </Grid>
+
+                        <CollectionView Grid.Row="2"
+                                        AutomationId="CalendarMonthGrid"
+                                        ItemsSource="{Binding CalendarDays}"
+                                        SelectionMode="None"
+                                        VerticalScrollBarVisibility="Never"
+                                        HeightRequest="{Binding CalendarGridHeight}">
+                            <CollectionView.ItemsLayout>
+                                <GridItemsLayout Orientation="Vertical"
+                                                 Span="7"
+                                                 HorizontalItemSpacing="2"
+                                                 VerticalItemSpacing="0" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:CalendarDay">
+                                    <Border BackgroundColor="{Binding BackgroundColor}"
+                                            Stroke="{Binding StrokeColor}"
+                                            StrokeShape="Ellipse"
+                                            StrokeThickness="2"
+                                            WidthRequest="33"
+                                            HeightRequest="33"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
+                                            SemanticProperties.Description="{Binding AccessibilityDescription}">
+                                        <Label Text="{Binding DayNumber}"
+                                               TextColor="{Binding TextColor}"
+                                               FontSize="13"
+                                               FontAttributes="Bold"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" />
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:CalendarViewModel}}, Path=SelectDayCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Grid>
+                </Border>
+
+                <Grid ColumnDefinitions="*,*"
+                      ColumnSpacing="12">
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource BorderColor}"
+                            StrokeShape="RoundRectangle 20"
+                            Padding="14,12">
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="10">
+                            <Label Text="{x:Static constants:IconFont.Check}"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="21"
+                                   TextColor="{StaticResource PrimaryGreen}"
+                                   VerticalTextAlignment="Center" />
+                            <VerticalStackLayout Grid.Column="1"
+                                                 Spacing="2"
+                                                 VerticalOptions="Center">
+                                <Label Text="{Binding CompletedCount, StringFormat='{0:00}'}"
+                                       TextColor="{StaticResource TextWhite}"
+                                       FontSize="21"
+                                       FontAttributes="Bold" />
+                                <Label Text="Actions validées"
+                                       TextColor="{StaticResource TextGray}"
+                                       FontSize="10" />
+                            </VerticalStackLayout>
+                        </Grid>
                     </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                    <Border Grid.Column="1"
+                            BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource BorderColor}"
+                            StrokeShape="RoundRectangle 20"
+                            Padding="14,12">
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="10">
+                            <Label Text="{x:Static constants:IconFont.EnergySavingsLeaf}"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="21"
+                                   TextColor="{StaticResource PrimaryGreen}"
+                                   VerticalTextAlignment="Center" />
+                            <VerticalStackLayout Grid.Column="1"
+                                                 Spacing="2"
+                                                 VerticalOptions="Center">
+                                <Label Text="{Binding DailyCo2Saved, StringFormat='{0:F2} kg'}"
+                                       TextColor="{StaticResource TextWhite}"
+                                       FontSize="18"
+                                       FontAttributes="Bold" />
+                                <Label Text="CO₂ économisé"
+                                       TextColor="{StaticResource TextGray}"
+                                       FontSize="10" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </Grid>
 
-        <Grid Grid.Row="4"
-              ColumnDefinitions="*,*"
-              ColumnSpacing="10">
-            <Border BackgroundColor="{StaticResource CardBackground}"
-                    Stroke="{StaticResource BorderColor}"
-                    StrokeShape="RoundRectangle 14"
-                    Padding="12">
-                <VerticalStackLayout Spacing="3">
-                    <Label Text="Actions validées"
-                           TextColor="{StaticResource TextGray}"
-                           FontSize="11" />
-                    <Label Text="{Binding CompletedCount}"
-                           TextColor="{StaticResource PrimaryGreen}"
-                           FontSize="22"
-                           FontAttributes="Bold" />
-                </VerticalStackLayout>
-            </Border>
-            <Border Grid.Column="1"
-                    BackgroundColor="{StaticResource CardBackground}"
-                    Stroke="{StaticResource BorderColor}"
-                    StrokeShape="RoundRectangle 14"
-                    Padding="12">
-                <VerticalStackLayout Spacing="3">
-                    <Label Text="CO₂ économisé"
-                           TextColor="{StaticResource TextGray}"
-                           FontSize="11" />
-                    <Label Text="{Binding DailyCo2Saved, StringFormat='{0:F2} kg'}"
-                           TextColor="{StaticResource SecondaryBlue}"
-                           FontSize="22"
-                           FontAttributes="Bold" />
-                </VerticalStackLayout>
-            </Border>
-        </Grid>
-
-        <Grid Grid.Row="5"
-              ColumnDefinitions="*,Auto">
-            <VerticalStackLayout Spacing="2">
-                <Label Text="Écogestes de la journée"
-                       TextColor="{StaticResource TextWhite}"
-                       FontSize="16"
-                       FontAttributes="Bold" />
-                <Label Text="{Binding SelectedDateLabel}"
-                       TextColor="{StaticResource TextGray}"
-                       FontSize="12" />
-            </VerticalStackLayout>
-            <DatePicker Grid.Column="1"
-                        AutomationId="CalendarDatePicker"
-                        Date="{Binding SelectedDate, Mode=OneWay}"
-                        TextColor="{StaticResource PrimaryGreen}"
-                        Format="dd/MM/yyyy"
-                        VerticalOptions="Center"
-                        DateSelected="OnDateSelected"
-                        SemanticProperties.Description="Choisir une date" />
-        </Grid>
-
-        <RefreshView Grid.Row="6"
-                     IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-                     Command="{Binding RefreshCommand}">
-            <CollectionView ItemsSource="{Binding DailyLogs}"
-                            SelectionMode="None">
-                <CollectionView.EmptyView>
-                    <VerticalStackLayout Spacing="8"
-                                         HorizontalOptions="Center"
-                                         VerticalOptions="Center">
-                        <Label Text="Aucun écogeste enregistré ce jour-là."
+                <Grid ColumnDefinitions="*,Auto"
+                      ColumnSpacing="10">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Écogestes du jour"
+                               TextColor="{StaticResource TextWhite}"
+                               FontSize="17"
+                               FontAttributes="Bold" />
+                        <Label Text="{Binding SelectedDateLabel}"
                                TextColor="{StaticResource TextGray}"
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="Les jours avec une validation sont signalés par un point vert."
-                               TextColor="{StaticResource TextMuted}"
+                               FontSize="12" />
+                    </VerticalStackLayout>
+                    <HorizontalStackLayout Grid.Column="1"
+                                           Spacing="6"
+                                           VerticalOptions="Center">
+                        <Ellipse Fill="{StaticResource PrimaryGreen}" WidthRequest="9" HeightRequest="9" />
+                        <Label Text="Validé"
+                               TextColor="{StaticResource TextGray}"
                                FontSize="11"
+                               VerticalTextAlignment="Center" />
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding DailyLogs}"
+                                     Spacing="8">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:HabitLogDetails">
+                            <Border BackgroundColor="{StaticResource CardBackground}"
+                                    Stroke="{StaticResource BorderColor}"
+                                    StrokeShape="RoundRectangle 16"
+                                    Padding="12">
+                                <Grid ColumnDefinitions="Auto,*,Auto"
+                                      ColumnSpacing="11">
+                                    <Border WidthRequest="42"
+                                            HeightRequest="42"
+                                            BackgroundColor="{Binding IconColor}"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 14">
+                                        <Label Text="{Binding IconGlyph}"
+                                               FontFamily="MaterialIcons"
+                                               TextColor="{StaticResource BackgroundDark}"
+                                               FontSize="20"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1"
+                                                         VerticalOptions="Center"
+                                                         Spacing="2">
+                                        <Label Text="{Binding HabitTitle}"
+                                               TextColor="{StaticResource TextWhite}"
+                                               FontSize="14"
+                                               FontAttributes="Bold" />
+                                        <Label Text="Écogeste accompli"
+                                               TextColor="{StaticResource TextGray}"
+                                               FontSize="11" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="2"
+                                           Text="{Binding Co2ReductionPerAction, StringFormat='-{0:F2} kg'}"
+                                           TextColor="{StaticResource PrimaryGreen}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           VerticalTextAlignment="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Border IsVisible="{Binding IsDailyLogsEmpty}"
+                        BackgroundColor="{StaticResource CardBackground}"
+                        Stroke="{StaticResource BorderColor}"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="18">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Aucun écogeste pour cette date"
+                               TextColor="{StaticResource TextWhite}"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Choisissez un autre jour dans le calendrier."
+                               TextColor="{StaticResource TextGray}"
+                               FontSize="12"
                                HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
-                </CollectionView.EmptyView>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:HabitLogDetails">
-                        <Border BackgroundColor="{StaticResource CardBackground}"
-                                Stroke="{StaticResource BorderColor}"
-                                StrokeShape="RoundRectangle 12"
-                                Padding="12"
-                                Margin="0,0,0,8">
-                            <Grid ColumnDefinitions="Auto,*,Auto"
-                                  ColumnSpacing="12">
-                                <Border WidthRequest="42"
-                                        HeightRequest="42"
-                                        BackgroundColor="{Binding IconColor}"
-                                        StrokeThickness="0"
-                                        StrokeShape="RoundRectangle 12">
-                                    <Label Text="{Binding IconGlyph}"
-                                           FontFamily="MaterialIcons"
-                                           TextColor="{StaticResource BackgroundDark}"
-                                           FontSize="21"
-                                           HorizontalTextAlignment="Center"
-                                           VerticalTextAlignment="Center" />
-                                </Border>
-                                <VerticalStackLayout Grid.Column="1"
-                                                     VerticalOptions="Center"
-                                                     Spacing="2">
-                                    <Label Text="{Binding HabitTitle}"
-                                           TextColor="{StaticResource TextWhite}"
-                                           FontSize="14"
-                                           FontAttributes="Bold" />
-                                    <Label Text="Écogeste accompli"
-                                           TextColor="{StaticResource TextGray}"
-                                           FontSize="11" />
-                                </VerticalStackLayout>
-                                <Label Grid.Column="2"
-                                       Text="{Binding Co2ReductionPerAction, StringFormat='-{0:F2} kg'}"
-                                       TextColor="{StaticResource PrimaryGreen}"
-                                       FontSize="12"
-                                       FontAttributes="Bold"
-                                       VerticalTextAlignment="Center" />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </RefreshView>
-    </Grid>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
 </ContentPage>

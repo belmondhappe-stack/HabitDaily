@@ -19,6 +19,7 @@ public static class IconFont
     public const string PersonAdd = "\ue7fe";
     public const string LockReset = "\ueade";
     public const string ArrowBack = "\ue5c4";
+    public const string Notifications = "\ue7f4";
     public const string Book = "\ue865";
     public const string Alarm = "\ue855";
     public const string WaterDrop = "\ue798";

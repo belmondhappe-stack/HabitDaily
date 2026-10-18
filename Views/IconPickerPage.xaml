@@ -11,7 +11,9 @@
 
     <Grid Padding="20"
           RowDefinitions="Auto,Auto,Auto,*"
-          RowSpacing="14">
+          RowSpacing="14"
+          HorizontalOptions="Center"
+          MaximumWidthRequest="620">
         <Grid ColumnDefinitions="*,Auto">
             <VerticalStackLayout Spacing="3">
                 <Label Text="Catalogue d’icônes"

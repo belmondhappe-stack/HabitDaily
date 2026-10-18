@@ -14,15 +14,13 @@ public sealed class CalendarViewModel : BaseViewModel
     private DateTime _displayedMonth = new(DateTime.Today.Year, DateTime.Today.Month, 1);
     private int _completedCount;
     private double _dailyCo2Saved;
+    private bool _isDailyLogsEmpty = true;
     private bool _isBusy;
     private int _loadVersion;
     private List<HabitLogDetails> _monthLogs = new();
 
     public CalendarViewModel()
     {
-        DaysOfWeek = new ObservableCollection<string>(
-            Enumerable.Range(0, 7)
-                .Select(offset => FrenchCulture.DateTimeFormat.AbbreviatedDayNames[(offset + 1) % 7]));
         CalendarDays = new ObservableCollection<CalendarDay>();
         DailyLogs = new ObservableCollection<HabitLogDetails>();
 
@@ -34,8 +32,6 @@ public sealed class CalendarViewModel : BaseViewModel
 
         BuildCalendarDays();
     }
-
-    public ObservableCollection<string> DaysOfWeek { get; }
 
     public ObservableCollection<CalendarDay> CalendarDays { get; }
 
@@ -64,12 +60,24 @@ public sealed class CalendarViewModel : BaseViewModel
                 return;
 
             OnPropertyChanged(nameof(DisplayedMonthLabel));
+            OnPropertyChanged(nameof(CalendarGridHeight));
             BuildCalendarDays();
         }
     }
 
     public string DisplayedMonthLabel =>
         FrenchCulture.TextInfo.ToTitleCase(DisplayedMonth.ToString("MMMM yyyy", FrenchCulture));
+
+    public double CalendarGridHeight
+    {
+        get
+        {
+            var firstDay = new DateTime(DisplayedMonth.Year, DisplayedMonth.Month, 1);
+            var leadingDays = ((int)firstDay.DayOfWeek + 6) % 7;
+            var weekCount = (leadingDays + DateTime.DaysInMonth(DisplayedMonth.Year, DisplayedMonth.Month) + 6) / 7;
+            return weekCount * 36;
+        }
+    }
 
     public string SelectedDateLabel =>
         FrenchCulture.TextInfo.ToTitleCase(SelectedDate.ToString("dddd d MMMM yyyy", FrenchCulture));
@@ -86,6 +94,12 @@ public sealed class CalendarViewModel : BaseViewModel
     {
         get => _dailyCo2Saved;
         private set => SetProperty(ref _dailyCo2Saved, value);
+    }
+
+    public bool IsDailyLogsEmpty
+    {
+        get => _isDailyLogsEmpty;
+        private set => SetProperty(ref _isDailyLogsEmpty, value);
     }
 
     public bool IsBusy
@@ -111,6 +125,7 @@ public sealed class CalendarViewModel : BaseViewModel
             if (user == null)
             {
                 _monthLogs = new List<HabitLogDetails>();
+                BuildCalendarDays();
                 UpdateSelectedDay();
                 await CurrentPage.DisplayAlertAsync(
                     "Session introuvable",
@@ -147,21 +162,13 @@ public sealed class CalendarViewModel : BaseViewModel
         }
     }
 
-    public async Task SelectDateAsync(DateTime date)
-    {
-        SelectedDate = date.Date;
-        if (SelectedDate.Year != DisplayedMonth.Year || SelectedDate.Month != DisplayedMonth.Month)
-        {
-            DisplayedMonth = SelectedDate;
-            await LoadAsync();
-        }
-    }
-
     private async Task ChangeMonthAsync(int monthDelta)
     {
         var newMonth = DisplayedMonth.AddMonths(monthDelta);
+        _monthLogs.Clear();
         DisplayedMonth = newMonth;
         SelectedDate = new DateTime(newMonth.Year, newMonth.Month, 1);
+        UpdateSelectedDay();
         await LoadAsync();
     }
 
@@ -170,7 +177,9 @@ public sealed class CalendarViewModel : BaseViewModel
         SelectedDate = DateTime.Today;
         if (DisplayedMonth.Year != SelectedDate.Year || DisplayedMonth.Month != SelectedDate.Month)
         {
+            _monthLogs.Clear();
             DisplayedMonth = SelectedDate;
+            UpdateSelectedDay();
             await LoadAsync();
         }
     }
@@ -180,12 +189,10 @@ public sealed class CalendarViewModel : BaseViewModel
         if (day == null)
             return;
 
+        if (!day.IsCurrentMonth)
+            return;
+
         SelectedDate = day.Date;
-        if (day.Date.Year != DisplayedMonth.Year || day.Date.Month != DisplayedMonth.Month)
-        {
-            DisplayedMonth = day.Date;
-            await LoadAsync();
-        }
     }
 
     private void BuildCalendarDays()
@@ -196,10 +203,13 @@ public sealed class CalendarViewModel : BaseViewModel
             .ToHashSet();
         var firstDay = new DateTime(DisplayedMonth.Year, DisplayedMonth.Month, 1);
         var mondayOffset = ((int)firstDay.DayOfWeek + 6) % 7;
+        var dayCount = DateTime.DaysInMonth(DisplayedMonth.Year, DisplayedMonth.Month);
+        var weekCount = (mondayOffset + dayCount + 6) / 7;
+        var visibleDayCount = weekCount * 7;
         var firstVisibleDate = firstDay.AddDays(-mondayOffset);
 
         CalendarDays.Clear();
-        for (var index = 0; index < 42; index++)
+        for (var index = 0; index < visibleDayCount; index++)
         {
             var date = firstVisibleDate.AddDays(index);
             CalendarDays.Add(new CalendarDay(date, date.Month == DisplayedMonth.Month)
@@ -220,6 +230,7 @@ public sealed class CalendarViewModel : BaseViewModel
         foreach (var log in selectedLogs)
             DailyLogs.Add(log);
 
+        IsDailyLogsEmpty = selectedLogs.Count == 0;
         CompletedCount = selectedLogs.Count;
         DailyCo2Saved = Math.Round(selectedLogs.Sum(log => log.Co2ReductionPerAction), 2);
         foreach (var day in CalendarDays)

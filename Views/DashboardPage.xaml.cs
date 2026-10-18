@@ -19,4 +19,12 @@ public partial class DashboardPage : ContentPage
 
         await _viewModel.LoadDataAsync();
     }
+
+    private async void OnNotificationsClicked(object? sender, EventArgs e)
+    {
+        await DisplayAlertAsync(
+            "Notifications",
+            "Les rappels et notifications seront bientôt disponibles.",
+            "OK");
+    }
 }

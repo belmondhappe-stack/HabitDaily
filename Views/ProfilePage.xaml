@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:constants="clr-namespace:HabitDaily.Constants"
+             xmlns:viewModels="clr-namespace:HabitDaily.ViewModels"
+             x:Class="HabitDaily.Views.ProfilePage"
+             x:DataType="viewModels:ProfileViewModel"
+             Title="Profil"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,16,18,28"
+                             Spacing="18"
+                             HorizontalOptions="Center"
+                             MaximumWidthRequest="560">
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="10">
+                <Label Text="Profil"
+                       TextColor="{StaticResource TextWhite}"
+                       FontSize="23"
+                       FontAttributes="Bold"
+                       VerticalTextAlignment="Center" />
+                <Button Grid.Column="1"
+                        Text="{x:Static constants:IconFont.Notifications}"
+                        FontFamily="MaterialIcons"
+                        FontSize="20"
+                        TextColor="{StaticResource TextWhite}"
+                        BackgroundColor="{StaticResource CardRaised}"
+                        BorderColor="{StaticResource BorderColor}"
+                        BorderWidth="1"
+                        CornerRadius="22"
+                        WidthRequest="44"
+                        HeightRequest="44"
+                        Padding="0"
+                        Clicked="OnNotificationsClicked"
+                        SemanticProperties.Description="Notifications" />
+            </Grid>
+
+            <Border BackgroundColor="{StaticResource CardBackground}"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeShape="RoundRectangle 24"
+                    Padding="16">
+                <Grid ColumnDefinitions="Auto,*"
+                      ColumnSpacing="14">
+                    <Border WidthRequest="76"
+                            HeightRequest="76"
+                            BackgroundColor="#193D2D"
+                            Stroke="{StaticResource PrimaryGreen}"
+                            StrokeThickness="2"
+                            StrokeShape="Ellipse"
+                            VerticalOptions="Center">
+                        <Label Text="{Binding Initials}"
+                               TextColor="{StaticResource PrimaryGreen}"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1"
+                                         VerticalOptions="Center"
+                                         Spacing="5">
+                        <Label Text="{Binding FullName, TargetNullValue='Éco-citoyen(ne)'}"
+                               TextColor="{StaticResource TextWhite}"
+                               FontSize="19"
+                               FontAttributes="Bold"
+                               LineBreakMode="TailTruncation" />
+                        <Label Text="{Binding Email}"
+                               TextColor="{StaticResource TextGray}"
+                               FontSize="12"
+                               LineBreakMode="TailTruncation" />
+                        <HorizontalStackLayout Spacing="5">
+                            <Label Text="{x:Static constants:IconFont.EnergySavingsLeaf}"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="15"
+                                   TextColor="{StaticResource PrimaryGreen}"
+                                   VerticalTextAlignment="Center" />
+                            <Label Text="{Binding LevelBadge}"
+                                   TextColor="{StaticResource PrimaryGreen}"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Votre semaine"
+                       TextColor="{StaticResource TextWhite}"
+                       FontSize="16"
+                       FontAttributes="Bold" />
+                <HorizontalStackLayout BindableLayout.ItemsSource="{Binding WeekDays}"
+                                       HorizontalOptions="Center"
+                                       Spacing="8">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:ProfileWeekDay">
+                            <Border WidthRequest="43"
+                                    HeightRequest="68"
+                                    BackgroundColor="{Binding BackgroundColor}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 18">
+                                <VerticalStackLayout Spacing="2"
+                                                     VerticalOptions="Center">
+                                    <Label Text="{Binding DayLabel}"
+                                           TextColor="{Binding TextColor}"
+                                           FontSize="10"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="{Binding DayNumber}"
+                                           TextColor="{Binding TextColor}"
+                                           FontSize="17"
+                                           FontAttributes="Bold"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <Border BackgroundColor="#153C2B"
+                    Stroke="{StaticResource PrimaryGreen}"
+                    StrokeDashArray="6,4"
+                    StrokeThickness="2"
+                    StrokeShape="RoundRectangle 24"
+                    Padding="18">
+                <VerticalStackLayout Spacing="12">
+                    <Border WidthRequest="48"
+                            HeightRequest="48"
+                            BackgroundColor="{StaticResource PrimaryGreen}"
+                            StrokeThickness="0"
+                            StrokeShape="Ellipse"
+                            HorizontalOptions="Center">
+                        <Label Text="{x:Static constants:IconFont.EnergySavingsLeaf}"
+                               FontFamily="MaterialIcons"
+                               FontSize="25"
+                               TextColor="{StaticResource BackgroundDark}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Border>
+                    <Label Text="Votre impact grandit"
+                           TextColor="{StaticResource TextWhite}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Chaque habitude répétée contribue à un quotidien plus durable."
+                           TextColor="{StaticResource TextGray}"
+                           FontSize="12"
+                           HorizontalTextAlignment="Center" />
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="3"
+                                             HorizontalOptions="Center">
+                            <Label Text="{Binding CurrentStreak, StringFormat='{0} jours'}"
+                                   TextColor="{StaticResource SecondaryBlue}"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Série actuelle"
+                                   TextColor="{StaticResource TextGray}"
+                                   FontSize="11"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1"
+                                             Spacing="3"
+                                             HorizontalOptions="Center">
+                            <Label Text="{Binding TotalCo2Saved, StringFormat='{0:F1} kg'}"
+                                   TextColor="{StaticResource PrimaryGreen}"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="CO₂ économisé"
+                                   TextColor="{StaticResource TextGray}"
+                                   FontSize="11"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*"
+                  ColumnSpacing="12">
+                <Border BackgroundColor="{StaticResource CardRaised}"
+                        Stroke="{StaticResource BorderColor}"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="14">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Habitudes suivies"
+                               TextColor="{StaticResource TextGray}"
+                               FontSize="11" />
+                        <Label Text="{Binding HabitCount}"
+                               TextColor="{StaticResource TextWhite}"
+                               FontSize="22"
+                               FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1"
+                        BackgroundColor="{StaticResource CardRaised}"
+                        Stroke="{StaticResource BorderColor}"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="14">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Meilleure série"
+                               TextColor="{StaticResource TextGray}"
+                               FontSize="11" />
+                        <Label Text="{Binding BestStreak, StringFormat='{0} jours'}"
+                               TextColor="{StaticResource TextWhite}"
+                               FontSize="22"
+                               FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

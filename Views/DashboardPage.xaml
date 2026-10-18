@@ -5,153 +5,244 @@
              xmlns:models="clr-namespace:HabitDaily.Models"
              xmlns:viewModels="clr-namespace:HabitDaily.ViewModels"
              x:Class="HabitDaily.Views.DashboardPage"
+             x:DataType="viewModels:DashboardViewModel"
              BackgroundColor="{StaticResource BackgroundDark}"
              Title="Accueil">
 
-    <Grid RowDefinitions="Auto, *" Padding="20" RowSpacing="20">
-        
-        <!-- En-tête fixe -->
-        <VerticalStackLayout Grid.Row="0" Spacing="15">
-            <!-- Bienvenue & Badge -->
-            <Grid ColumnDefinitions="*, Auto">
-                <VerticalStackLayout Grid.Column="0">
-                    <Label Text="Bonjour," TextColor="{StaticResource TextGray}" FontSize="14" />
-                    <Label Text="{Binding CurrentUser.FullName, TargetNullValue='Éco-citoyen(ne)'}"
-                           TextColor="{StaticResource TextWhite}"
-                           FontSize="22"
-                           FontAttributes="Bold" />
-                </VerticalStackLayout>
-                
-                <HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
-                    <!-- Bouton Ajouter une habitude -->
-                    <Button Text="{x:Static constants:IconFont.Plus}"
-                            FontFamily="MaterialIcons"
-                            TextColor="{StaticResource BackgroundDark}"
-                            BackgroundColor="{StaticResource PrimaryGreen}"
-                            FontSize="18"
-                            CornerRadius="18"
-                            WidthRequest="36"
-                            HeightRequest="36"
-                            Command="{Binding AddHabitCommand}"
-                            VerticalOptions="Center" />
+    <RefreshView IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+                 Command="{Binding RefreshCommand}">
+        <CollectionView ItemsSource="{Binding TodayHabits}"
+                        SelectionMode="None"
+                        HorizontalOptions="Center"
+                        MaximumWidthRequest="620"
+                        VerticalScrollBarVisibility="Never">
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="18,18,18,14"
+                                     Spacing="20">
+                    <Grid ColumnDefinitions="*,Auto,Auto"
+                          ColumnSpacing="10">
+                        <VerticalStackLayout Spacing="2"
+                                             VerticalOptions="Center">
+                            <Label Text="Bienvenue,"
+                                   TextColor="{StaticResource TextGray}"
+                                   FontSize="13" />
+                            <Label Text="{Binding CurrentUser.FullName, TargetNullValue='Éco-citoyen(ne)'}"
+                                   TextColor="{StaticResource TextWhite}"
+                                   FontSize="23"
+                                   FontAttributes="Bold"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="1" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1"
+                                Text="{x:Static constants:IconFont.Notifications}"
+                                FontFamily="MaterialIcons"
+                                FontSize="20"
+                                TextColor="{StaticResource TextWhite}"
+                                BackgroundColor="{StaticResource CardRaised}"
+                                BorderColor="{StaticResource BorderColor}"
+                                BorderWidth="1"
+                                CornerRadius="22"
+                                WidthRequest="44"
+                                HeightRequest="44"
+                                Padding="0"
+                                Clicked="OnNotificationsClicked"
+                                SemanticProperties.Description="Notifications" />
+                        <Button Grid.Column="2"
+                                Text="{x:Static constants:IconFont.Plus}"
+                                FontFamily="MaterialIcons"
+                                FontSize="22"
+                                TextColor="{StaticResource BackgroundDark}"
+                                BackgroundColor="{StaticResource PrimaryGreen}"
+                                CornerRadius="22"
+                                WidthRequest="44"
+                                HeightRequest="44"
+                                Padding="0"
+                                Command="{Binding AddHabitCommand}"
+                                SemanticProperties.Description="Ajouter une habitude" />
+                    </Grid>
 
-                    <!-- Badge Niveau -->
                     <Border BackgroundColor="{StaticResource CardBackground}"
                             Stroke="{StaticResource PrimaryGreen}"
-                            StrokeShape="RoundRectangle 20"
-                            Padding="12,6"
-                            VerticalOptions="Center">
-                        <Label Text="{Binding CurrentUser.LevelBadge, TargetNullValue='Niv. 1'}"
-                               TextColor="{StaticResource PrimaryGreen}"
-                               FontSize="12"
-                               FontAttributes="Bold" />
-                    </Border>
-                </HorizontalStackLayout>
-            </Grid>
-
-            <!-- Carte Impact CO2 / Statistiques rapides -->
-            <Border BackgroundColor="{StaticResource CardBackground}"
-                    Stroke="{StaticResource BorderColor}"
-                    StrokeShape="RoundRectangle 16"
-                    Padding="16">
-                <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
-                    <VerticalStackLayout Grid.Column="0">
-                        <Label Text="CO₂ Économisé" TextColor="{StaticResource TextGray}" FontSize="12" />
-                        <HorizontalStackLayout Spacing="4">
-                            <Label Text="{Binding CurrentUser.TotalCo2Saved, StringFormat='{0:F1}'}" 
-                                   TextColor="{StaticResource PrimaryGreen}" 
-                                   FontSize="24" 
-                                   FontAttributes="Bold" />
-                            <Label Text="kg" TextColor="{StaticResource PrimaryGreen}" FontSize="16" VerticalOptions="End" />
-                        </HorizontalStackLayout>
-                    </VerticalStackLayout>
-
-                    <VerticalStackLayout Grid.Column="1">
-                        <Label Text="Série en cours" TextColor="{StaticResource TextGray}" FontSize="12" />
-                        <HorizontalStackLayout Spacing="4">
-                            <Label Text="{Binding CurrentUser.CurrentStreak}" 
-                                   TextColor="{StaticResource SecondaryBlue}" 
-                                   FontSize="24" 
-                                   FontAttributes="Bold" />
-                            <HorizontalStackLayout Spacing="4" VerticalOptions="End">
-                                <Label Text="jours" TextColor="{StaticResource SecondaryBlue}" FontSize="14" />
-                                <Label Text="{x:Static constants:IconFont.Fire}"
-                                       FontFamily="MaterialIcons"
-                                       TextColor="{StaticResource SecondaryBlue}"
-                                       FontSize="16"
-                                       VerticalOptions="Center" />
-                            </HorizontalStackLayout>
-                        </HorizontalStackLayout>
-                    </VerticalStackLayout>
-                </Grid>
-            </Border>
-
-            <HorizontalStackLayout Spacing="8">
-                <Label Text="{x:Static constants:IconFont.Leaf}"
-                       FontFamily="MaterialIcons"
-                       TextColor="{StaticResource PrimaryGreen}"
-                       FontSize="22"
-                       VerticalOptions="Center" />
-                <Label Text="Habitudes du jour"
-                       TextColor="{StaticResource TextWhite}"
-                       FontSize="18"
-                       FontAttributes="Bold"
-                       VerticalOptions="Center" />
-            </HorizontalStackLayout>
-        </VerticalStackLayout>
-
-        <!-- Liste des habitudes -->
-        <RefreshView Grid.Row="1"
-                     IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-                     Command="{Binding RefreshCommand}">
-            <CollectionView ItemsSource="{Binding TodayHabits}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Habit">
-                        <Border BackgroundColor="{StaticResource CardBackground}"
-                                Stroke="{StaticResource BorderColor}"
-                                StrokeShape="RoundRectangle 12"
-                                Padding="12"
-                                Margin="0,0,0,10">
-                            <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
-                                <Label Grid.Column="0"
-                                       Text="{Binding IconGlyph}"
-                                       FontFamily="MaterialIcons"
-                                       TextColor="{Binding IconColor}"
-                                       FontSize="22"
-                                       VerticalOptions="Center"
-                                       Margin="0,0,12,0" />
-
-                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                    <Label Text="{Binding Title}" TextColor="{StaticResource TextWhite}" FontSize="16" FontAttributes="Bold" />
-                                    <Label Text="{Binding Subtitle}" TextColor="{StaticResource TextGray}" FontSize="12" />
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 22"
+                            Padding="16">
+                        <Grid ColumnDefinitions="*,*"
+                              ColumnSpacing="14">
+                            <Grid ColumnDefinitions="Auto,*"
+                                  ColumnSpacing="10">
+                                <Border WidthRequest="42"
+                                        HeightRequest="42"
+                                        BackgroundColor="#193D2D"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 14"
+                                        VerticalOptions="Center">
+                                    <Label Text="{x:Static constants:IconFont.EnergySavingsLeaf}"
+                                           FontFamily="MaterialIcons"
+                                           FontSize="22"
+                                           TextColor="{StaticResource PrimaryGreen}"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1"
+                                                     Spacing="1"
+                                                     VerticalOptions="Center">
+                                    <Label Text="CO₂ économisé"
+                                           TextColor="{StaticResource TextGray}"
+                                           FontSize="11" />
+                                    <Label Text="{Binding CurrentUser.TotalCo2Saved, StringFormat='{0:F1} kg', TargetNullValue='0 kg'}"
+                                           TextColor="{StaticResource SecondaryBlue}"
+                                           FontSize="20"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation" />
                                 </VerticalStackLayout>
-
-                                <Button Grid.Column="2"
-                                        Text="{x:Static constants:IconFont.Unchecked}"
-                                        FontFamily="MaterialIcons"
-                                        TextColor="{StaticResource TextMuted}"
-                                        BackgroundColor="{StaticResource CardBackground}"
-                                        CornerRadius="20"
-                                        WidthRequest="40"
-                                        HeightRequest="40"
-                                        Command="{Binding ToggleHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:DashboardViewModel}}}"
-                                        CommandParameter="{Binding .}">
-                                    <Button.Triggers>
-                                        <DataTrigger TargetType="Button"
-                                                     Binding="{Binding IsCompletedToday}"
-                                                     Value="True">
-                                            <Setter Property="Text" Value="{x:Static constants:IconFont.Check}" />
-                                            <Setter Property="TextColor" Value="{StaticResource BackgroundDark}" />
-                                            <Setter Property="BackgroundColor" Value="{StaticResource PrimaryGreen}" />
-                                        </DataTrigger>
-                                    </Button.Triggers>
-                                </Button>
                             </Grid>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </RefreshView>
+                            <Grid Grid.Column="1"
+                                  ColumnDefinitions="Auto,*"
+                                  ColumnSpacing="10">
+                                <Border WidthRequest="42"
+                                        HeightRequest="42"
+                                        BackgroundColor="#343A18"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 14"
+                                        VerticalOptions="Center">
+                                    <Label Text="{x:Static constants:IconFont.Fire}"
+                                           FontFamily="MaterialIcons"
+                                           FontSize="22"
+                                           TextColor="{StaticResource SecondaryBlue}"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1"
+                                                     Spacing="1"
+                                                     VerticalOptions="Center">
+                                    <Label Text="Série en cours"
+                                           TextColor="{StaticResource TextGray}"
+                                           FontSize="11" />
+                                    <Label Text="{Binding CurrentUser.CurrentStreak, StringFormat='{0} jours', TargetNullValue='0 jour'}"
+                                           TextColor="{StaticResource TextWhite}"
+                                           FontSize="19"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Grid>
+                    </Border>
 
-    </Grid>
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Habitudes du jour"
+                                   TextColor="{StaticResource TextWhite}"
+                                   FontSize="19"
+                                   FontAttributes="Bold" />
+                            <Label Text="Chaque petit geste compte."
+                                   TextColor="{StaticResource TextGray}"
+                                   FontSize="12" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1"
+                                BackgroundColor="{StaticResource CardBackground}"
+                                Stroke="{StaticResource BorderColor}"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="10,6"
+                                VerticalOptions="Center">
+                            <Label Text="{Binding CurrentUser.LevelBadge, TargetNullValue='Éco-champion(ne)'}"
+                                   TextColor="{StaticResource PrimaryGreen}"
+                                   FontSize="11"
+                                   FontAttributes="Bold" />
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="26,18,26,32"
+                                     Spacing="10"
+                                     HorizontalOptions="Center">
+                    <Label Text="{x:Static constants:IconFont.Leaf}"
+                           FontFamily="MaterialIcons"
+                           FontSize="34"
+                           TextColor="{StaticResource PrimaryGreen}"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Votre première habitude vous attend"
+                           TextColor="{StaticResource TextWhite}"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Ajoutez un écogeste et commencez votre série."
+                           TextColor="{StaticResource TextGray}"
+                           FontSize="13"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Habit">
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource BorderColor}"
+                            StrokeShape="RoundRectangle 18"
+                            Padding="12"
+                            Margin="18,0,18,10">
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              ColumnSpacing="12"
+                              VerticalOptions="Center">
+                            <Border WidthRequest="46"
+                                    HeightRequest="46"
+                                    BackgroundColor="{Binding IconColor}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 15"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding IconGlyph}"
+                                       FontFamily="MaterialIcons"
+                                       TextColor="{StaticResource BackgroundDark}"
+                                       FontSize="23"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1"
+                                                 VerticalOptions="Center"
+                                                 Spacing="3">
+                                <Label Text="{Binding Title}"
+                                       TextColor="{StaticResource TextWhite}"
+                                       FontSize="15"
+                                       FontAttributes="Bold"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="1" />
+                                <Label Text="{Binding Subtitle}"
+                                       TextColor="{StaticResource TextGray}"
+                                       FontSize="12"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="1" />
+                            </VerticalStackLayout>
+                            <Button Grid.Column="2"
+                                    Text="{x:Static constants:IconFont.Unchecked}"
+                                    FontFamily="MaterialIcons"
+                                    FontSize="22"
+                                    TextColor="{StaticResource TextGray}"
+                                    BackgroundColor="{StaticResource CardRaised}"
+                                    BorderColor="{StaticResource BorderColor}"
+                                    BorderWidth="1"
+                                    CornerRadius="22"
+                                    WidthRequest="44"
+                                    HeightRequest="44"
+                                    Padding="0"
+                                    Command="{Binding ToggleHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:DashboardViewModel}}}"
+                                    CommandParameter="{Binding .}"
+                                    SemanticProperties.Description="Valider l’habitude">
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button"
+                                                 Binding="{Binding IsCompletedToday}"
+                                                 Value="True">
+                                        <Setter Property="Text" Value="{x:Static constants:IconFont.Check}" />
+                                        <Setter Property="TextColor" Value="{StaticResource BackgroundDark}" />
+                                        <Setter Property="BackgroundColor" Value="{StaticResource PrimaryGreen}" />
+                                        <Setter Property="BorderColor" Value="{StaticResource PrimaryGreen}" />
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
 </ContentPage>

@@ -8,12 +8,15 @@
              x:Class="HabitDaily.Views.CreateHabitPage"
              x:DataType="viewModels:CreateHabitViewModel"
              Shell.NavBarIsVisible="False"
-             Shell.TabBarIsVisible="False"
              BackgroundColor="{StaticResource BackgroundDark}"
              Title="Nouvelle habitude">
 
-    <Grid RowDefinitions="Auto,*,Auto" Padding="20" RowSpacing="12">
-        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+    <Grid RowDefinitions="Auto,*,Auto"
+          Padding="20"
+          RowSpacing="12"
+          HorizontalOptions="Center"
+          MaximumWidthRequest="600">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
             <Button Text="{x:Static constants:IconFont.ArrowBack}"
                     FontFamily="MaterialIcons"
                     FontSize="20"
@@ -33,6 +36,20 @@
                        TextColor="{StaticResource TextGray}"
                        FontSize="12" />
             </VerticalStackLayout>
+            <Button Grid.Column="2"
+                    Text="{x:Static constants:IconFont.Notifications}"
+                    FontFamily="MaterialIcons"
+                    FontSize="20"
+                    TextColor="{StaticResource TextWhite}"
+                    BackgroundColor="{StaticResource CardRaised}"
+                    BorderColor="{StaticResource BorderColor}"
+                    BorderWidth="1"
+                    CornerRadius="22"
+                    WidthRequest="44"
+                    HeightRequest="44"
+                    Padding="0"
+                    Clicked="OnNotificationsClicked"
+                    SemanticProperties.Description="Notifications" />
         </Grid>
 
         <ScrollView Grid.Row="1">

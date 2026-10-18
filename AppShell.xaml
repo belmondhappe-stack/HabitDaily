@@ -6,51 +6,38 @@
        BackgroundColor="{StaticResource BackgroundDark}"
        ForegroundColor="{StaticResource PrimaryGreen}"
        TitleColor="{StaticResource TextWhite}"
->
-    
-    <!-- Barre de navigation inferieure -->
+       Shell.TabBarBackgroundColor="{StaticResource BackgroundDark}"
+       Shell.TabBarForegroundColor="{StaticResource PrimaryGreen}"
+       Shell.TabBarTitleColor="{StaticResource PrimaryGreen}"
+       Shell.TabBarUnselectedColor="{StaticResource TextGray}">
     <TabBar>
-
-        <!-- Onglet1 Accueil: Tableau de bord -->
         <Tab Title="Accueil">
             <Tab.Icon>
                 <FontImageSource Glyph="{x:Static constants:IconFont.Home}"
-                                 FontFamily="MaterialIcons"
-                                 Color="{StaticResource PrimaryGreen}" />
+                                 FontFamily="MaterialIcons" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" />
         </Tab>
-
-        <!-- Onglet2 Calendrier -->
         <Tab Title="Cal">
             <Tab.Icon>
                 <FontImageSource Glyph="{x:Static constants:IconFont.Calendar}"
-                                 FontFamily="MaterialIcons"
-                                 Color="{StaticResource PrimaryGreen}" />
+                                 FontFamily="MaterialIcons" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate views:CalendarPage}" />
         </Tab>
-
-        <!-- Onglet3 Statistiques -->
         <Tab Title="Stats">
             <Tab.Icon>
                 <FontImageSource Glyph="{x:Static constants:IconFont.Stats}"
-                                 FontFamily="MaterialIcons"
-                                 Color="{StaticResource PrimaryGreen}" />
+                                 FontFamily="MaterialIcons" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate views:StatsPage}" />
         </Tab>
-
-        <!-- Onglet4 Profile -->
-        <Tab Title="Profile">
+        <Tab Title="Profil">
             <Tab.Icon>
                 <FontImageSource Glyph="{x:Static constants:IconFont.Profile}"
-                                 FontFamily="MaterialIcons"
-                                 Color="{StaticResource PrimaryGreen}" />
+                                 FontFamily="MaterialIcons" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate views:ProfilePage}" />
         </Tab>
-
     </TabBar>
-    
 </Shell>

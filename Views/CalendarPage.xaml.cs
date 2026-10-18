@@ -18,8 +18,11 @@ public partial class CalendarPage : ContentPage
         await _viewModel.LoadAsync();
     }
 
-    private async void OnDateSelected(object? sender, DateChangedEventArgs e)
+    private async void OnNotificationsClicked(object? sender, EventArgs e)
     {
-        await _viewModel.SelectDateAsync(e.NewDate ?? DateTime.Today);
+        await DisplayAlertAsync(
+            "Notifications",
+            "Les rappels et notifications seront bientôt disponibles.",
+            "OK");
     }
 }

@@ -7,7 +7,11 @@
              Title="Inscription">
 
     <ScrollView>
-        <VerticalStackLayout Spacing="25" Padding="30" VerticalOptions="Center">
+        <VerticalStackLayout Spacing="25"
+                             Padding="30"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             MaximumWidthRequest="500">
 
             <!-- En-tête -->
             <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
