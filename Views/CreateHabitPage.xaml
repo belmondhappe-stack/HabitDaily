@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:constants="clr-namespace:HabitDaily.Constants"
+             xmlns:models="clr-namespace:HabitDaily.ViewModels"
+             xmlns:viewModels="clr-namespace:HabitDaily.ViewModels"
+             x:Class="HabitDaily.Views.CreateHabitPage"
+             x:DataType="viewModels:CreateHabitViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             BackgroundColor="{StaticResource BackgroundDark}"
+             Title="Nouvelle habitude">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="20" RowSpacing="12">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+            <Button Text="{x:Static constants:IconFont.ArrowBack}"
+                    FontFamily="MaterialIcons"
+                    FontSize="20"
+                    TextColor="{StaticResource TextWhite}"
+                    BackgroundColor="{StaticResource CardBackground}"
+                    CornerRadius="22"
+                    WidthRequest="44"
+                    HeightRequest="44"
+                    Command="{Binding CancelCommand}"
+                    SemanticProperties.Description="Retourner à l'accueil" />
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                <Label Text="Créer une habitude"
+                       TextColor="{StaticResource TextWhite}"
+                       FontSize="22"
+                       FontAttributes="Bold" />
+                <Label Text="Construisez une routine qui vous ressemble."
+                       TextColor="{StaticResource TextGray}"
+                       FontSize="12" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="16" Padding="0,4,0,12">
+                <Border BackgroundColor="{StaticResource CardBackground}"
+                        Stroke="{StaticResource BorderColor}"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="16">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border WidthRequest="52"
+                                HeightRequest="52"
+                                BackgroundColor="{Binding SelectedColor.Color}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 14"
+                                VerticalOptions="Center">
+                            <Label Text="{Binding SelectedIcon.Glyph}"
+                                   FontFamily="MaterialIcons"
+                                   FontSize="28"
+                                   TextColor="{StaticResource BackgroundDark}"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
+                            <Label Text="{Binding Title, TargetNullValue='Votre nouvelle habitude'}"
+                                   TextColor="{StaticResource TextWhite}"
+                                   FontSize="16"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding SelectedFrequency}"
+                                   TextColor="{StaticResource TextGray}"
+                                   FontSize="12" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Nom de l'habitude"
+                           TextColor="{StaticResource TextWhite}"
+                           FontSize="14"
+                           FontAttributes="Bold" />
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource BorderColor}"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="12,2">
+                        <Entry AutomationId="HabitTitleEntry"
+                               Placeholder="Ex. Lire 10 minutes"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               TextColor="{StaticResource TextWhite}"
+                               MaxLength="60"
+                               ReturnType="Done"
+                               Text="{Binding Title, Mode=TwoWay}" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Choisir une couleur"
+                           TextColor="{StaticResource TextWhite}"
+                           FontSize="14"
+                           FontAttributes="Bold" />
+                    <HorizontalStackLayout BindableLayout.ItemsSource="{Binding AvailableColors}"
+                                           Spacing="14">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:HabitColorOption">
+                                <Border WidthRequest="40"
+                                        HeightRequest="40"
+                                        Stroke="{StaticResource TextWhite}"
+                                        StrokeThickness="1"
+                                        StrokeShape="Ellipse"
+                                        SemanticProperties.Description="{Binding Name}">
+                                    <Grid>
+                                        <Ellipse Fill="{Binding Color}" />
+                                        <Label Text="{x:Static constants:IconFont.Check}"
+                                               FontFamily="MaterialIcons"
+                                               FontSize="18"
+                                               TextColor="{StaticResource BackgroundDark}"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               IsVisible="{Binding IsSelected}" />
+                                    </Grid>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding SelectColorCommand, Source={RelativeSource AncestorType={x:Type viewModels:CreateHabitViewModel}}}"
+                                            CommandParameter="{Binding HexValue}" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Choisir une icône"
+                           TextColor="{StaticResource TextWhite}"
+                           FontSize="14"
+                           FontAttributes="Bold" />
+                    <HorizontalStackLayout BindableLayout.ItemsSource="{Binding AvailableIcons}"
+                                           Spacing="8"
+                                           HorizontalOptions="Fill">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:HabitIconOption">
+                                <VerticalStackLayout Spacing="3" WidthRequest="52">
+                                    <Button Text="{Binding Glyph}"
+                                            FontFamily="MaterialIcons"
+                                            FontSize="20"
+                                            WidthRequest="44"
+                                            HeightRequest="44"
+                                            Padding="0"
+                                            BackgroundColor="{StaticResource CardBackground}"
+                                            TextColor="{StaticResource TextGray}"
+                                            Command="{Binding SelectIconCommand, Source={RelativeSource AncestorType={x:Type viewModels:CreateHabitViewModel}}}"
+                                            CommandParameter="{Binding .}"
+                                            SemanticProperties.Description="{Binding Label}">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button"
+                                                         Binding="{Binding IsSelected}"
+                                                         Value="True">
+                                                <Setter Property="BackgroundColor" Value="{StaticResource PrimaryGreen}" />
+                                                <Setter Property="TextColor" Value="{StaticResource BackgroundDark}" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                    <Label Text="{Binding Label}"
+                                           TextColor="{StaticResource TextGray}"
+                                           FontSize="10"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Fréquence"
+                           TextColor="{StaticResource TextWhite}"
+                           FontSize="14"
+                           FontAttributes="Bold" />
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource BorderColor}"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="10,2">
+                        <Picker AutomationId="HabitFrequencyPicker"
+                                Title="Choisir une fréquence"
+                                TitleColor="{StaticResource TextMuted}"
+                                TextColor="{StaticResource TextWhite}"
+                                BackgroundColor="{StaticResource CardBackground}"
+                                ItemsSource="{Binding Frequencies}"
+                                SelectedItem="{Binding SelectedFrequency, Mode=TwoWay}" />
+                    </Border>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Button Grid.Row="2"
+                AutomationId="SaveHabitButton"
+                Text="{Binding SaveButtonText}"
+                TextColor="{StaticResource BackgroundDark}"
+                BackgroundColor="{StaticResource PrimaryGreen}"
+                FontAttributes="Bold"
+                FontSize="16"
+                CornerRadius="12"
+                HeightRequest="52"
+                Command="{Binding SaveCommand}" />
+    </Grid>
+</ContentPage>

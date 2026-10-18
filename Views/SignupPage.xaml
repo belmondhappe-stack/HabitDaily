@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:constants="clr-namespace:HabitDaily.Constants"
+             x:Class="HabitDaily.Views.SignupPage"
+             BackgroundColor="{StaticResource BackgroundDark}"
+             Title="Inscription">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="30" VerticalOptions="Center">
+
+            <!-- En-tête -->
+            <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                <Label Text="{x:Static constants:IconFont.PersonAdd}"
+                       FontFamily="MaterialIcons"
+                       TextColor="{StaticResource PrimaryGreen}"
+                       FontSize="28"
+                       VerticalOptions="Center" />
+                <Label Text="Rejoindre HabitDaily" 
+                       TextColor="{StaticResource PrimaryGreen}" 
+                       FontSize="28" 
+                       FontAttributes="Bold" 
+                       VerticalTextAlignment="Center" />
+            </HorizontalStackLayout>
+            <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
+                <Label Text="Commencez votre transition éco-responsable" 
+                       TextColor="{StaticResource TextMuted}" 
+                       FontSize="14" 
+                       HorizontalTextAlignment="Center"/>
+            </VerticalStackLayout>
+
+            <!-- Formulaire d'inscription -->
+            <VerticalStackLayout Spacing="15" Margin="0,10,0,0">
+                
+                <!-- Champ Nom complet -->
+                <Border BackgroundColor="{StaticResource CardBackground}" 
+                        Stroke="{StaticResource BorderColor}" 
+                        StrokeShape="RoundRectangle 12" Padding="12">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Label Text="{x:Static constants:IconFont.Person}"
+                               FontFamily="MaterialIcons"
+                               TextColor="{StaticResource TextMuted}"
+                               FontSize="20"
+                               VerticalOptions="Center" />
+                        <Entry Grid.Column="1"
+                               Placeholder="Nom complet"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               TextColor="{StaticResource TextWhite}"
+                               Text="{Binding FullName}" />
+                    </Grid>
+                </Border>
+
+                <!-- Champ Email -->
+                <Border BackgroundColor="{StaticResource CardBackground}" 
+                        Stroke="{StaticResource BorderColor}" 
+                        StrokeShape="RoundRectangle 12" Padding="12">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Label Text="{x:Static constants:IconFont.Email}"
+                               FontFamily="MaterialIcons"
+                               TextColor="{StaticResource TextMuted}"
+                               FontSize="20"
+                               VerticalOptions="Center" />
+                        <Entry Grid.Column="1"
+                               Placeholder="Adresse email"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               TextColor="{StaticResource TextWhite}"
+                               Text="{Binding Email}"
+                               Keyboard="Email" />
+                    </Grid>
+                </Border>
+
+                <!-- Champ Mot de passe -->
+                <Border BackgroundColor="{StaticResource CardBackground}" 
+                        Stroke="{StaticResource BorderColor}" 
+                        StrokeShape="RoundRectangle 12" Padding="12">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Label Text="{x:Static constants:IconFont.Lock}"
+                               FontFamily="MaterialIcons"
+                               TextColor="{StaticResource TextMuted}"
+                               FontSize="20"
+                               VerticalOptions="Center" />
+                        <Entry Grid.Column="1"
+                               Placeholder="Mot de passe"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               TextColor="{StaticResource TextWhite}"
+                               Text="{Binding Password}"
+                               IsPassword="True" />
+                    </Grid>
+                </Border>
+
+                <!-- Bouton Valider l'inscription -->
+                <Button Text="Créer mon compte" 
+                        BackgroundColor="{StaticResource PrimaryGreen}"
+                        TextColor="{StaticResource BackgroundDark}"
+                        FontAttributes="Bold"
+                        CornerRadius="12"
+                        HeightRequest="50"
+                        Command="{Binding SignupCommand}"
+                        Margin="0,10,0,0">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{x:Static constants:IconFont.PersonAdd}"
+                                         FontFamily="MaterialIcons"
+                                         Color="{StaticResource BackgroundDark}" />
+                    </Button.ImageSource>
+                </Button>
+
+                <!-- Bouton Retour -->
+                <Button Text="Déjà un compte ? Se connecter" 
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource SecondaryBlue}"
+                        Command="{Binding GoBackCommand}">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{x:Static constants:IconFont.ArrowBack}"
+                                         FontFamily="MaterialIcons"
+                                         Color="{StaticResource SecondaryBlue}" />
+                    </Button.ImageSource>
+                </Button>
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
