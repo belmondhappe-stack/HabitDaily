@@ -203,6 +203,28 @@
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Spacing="8">
+                    <Label Text="Catégorie"
+                           TextColor="{StaticResource TextWhite}"
+                           FontSize="14"
+                           FontAttributes="Bold" />
+                    <Border BackgroundColor="{StaticResource CardBackground}"
+                            Stroke="{StaticResource BorderColor}"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="10,2">
+                        <Picker AutomationId="HabitCategoryPicker"
+                                Title="Choisir une catégorie"
+                                TitleColor="{StaticResource TextMuted}"
+                                TextColor="{StaticResource TextWhite}"
+                                ItemsSource="{Binding Categories}"
+                                ItemDisplayBinding="{Binding DisplayName}"
+                                SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+                    </Border>
+                    <Label Text="{Binding DefaultCo2, StringFormat='Valeur CO₂ par validation : {0:F1} kg'}"
+                           TextColor="{StaticResource TextGray}"
+                           FontSize="11" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="8">
                     <Label Text="Fréquence"
                            TextColor="{StaticResource TextWhite}"
                            FontSize="14"

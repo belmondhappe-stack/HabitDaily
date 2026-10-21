@@ -16,7 +16,15 @@ namespace HabitDaily.Models
 
         public int UserId { get; set; }
 
+        public int? GoalId { get; set; }
+
         public string Title { get; set; } = string.Empty;
+
+        public string Category { get; set; } = "Autre";
+
+        public string Color { get; set; } = "#00E676";
+
+        public string Icon { get; set; } = "🌱";
 
         public string Subtitle { get; set; } = string.Empty;
 
@@ -28,11 +36,25 @@ namespace HabitDaily.Models
         public string IconGlyph => IconFont.ForHabitTitle(Title, IconName);
 
         [Ignore]
-        public Color IconColor => Color.FromArgb(HexColor);
+        public Color IconColor => Microsoft.Maui.Graphics.Color.FromArgb(HexColor);
 
         public string Frequency { get; set; } = "Quotidienne";
 
+        public string FrequencyType { get; set; } = "Quotidienne";
+
+        public string SelectedDays { get; set; } = string.Empty;
+
+        public int QuotaCount { get; set; }
+
+        public TimeSpan? ScheduledTime { get; set; }
+
+        public DateTime StartDate { get; set; } = DateTime.Today;
+
+        public DateTime? EndDate { get; set; }
+
         public double Co2ReductionPerAction { get; set; } = 0.2;
+
+        public bool IsArchived { get; set; }
 
         public string ReminderTime { get; set; } = "08:00";
 

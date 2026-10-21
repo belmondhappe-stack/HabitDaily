@@ -12,6 +12,7 @@ public class DashboardViewModel : BaseViewModel
     private User? _currentUser;
     private bool _isBusy;
     private bool _isUpdatingHabit;
+    private readonly EtatDuJourService _etatDuJourService = new();
 
     public User? CurrentUser
     {
@@ -58,6 +59,7 @@ public class DashboardViewModel : BaseViewModel
                 return;
             }
 
+            await _etatDuJourService.RunEngineCatchUpAsync(user.Id);
             var dashboardData = await DatabaseService.GetDashboardDataAsync(user.Id);
             var today = DateTime.Today;
             var completedToday = dashboardData.Logs
@@ -98,11 +100,19 @@ public class DashboardViewModel : BaseViewModel
         _isUpdatingHabit = true;
         try
         {
-            await DatabaseService.SaveHabitCompletionAsync(
-                CurrentUser.Id,
-                habit.Id,
-                !habit.IsCompletedToday,
-                DateTime.Today);
+            if (habit.IsCompletedToday)
+            {
+                await DatabaseService.SaveHabitCompletionAsync(
+                    CurrentUser.Id,
+                    habit.Id,
+                    false,
+                    DateTime.Today);
+            }
+            else if (!await _etatDuJourService.CompleteHabitAsync(habit.Id, DateTime.Today))
+            {
+                throw new InvalidOperationException("Cette habitude ne peut pas être validée pour cette date.");
+            }
+
             _isUpdatingHabit = false;
             await LoadDataAsync();
         }

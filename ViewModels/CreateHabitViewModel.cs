@@ -13,6 +13,7 @@ public class CreateHabitViewModel : BaseViewModel
 {
     private string _title = string.Empty;
     private string _selectedFrequency = "Quotidienne";
+    private Category _selectedCategory = Category.DefaultCategories[^1];
     private HabitColorOption _selectedColor;
     private HabitIconOption _selectedIcon;
     private Color _pickerColor = Color.FromArgb("#166718");
@@ -44,6 +45,7 @@ public class CreateHabitViewModel : BaseViewModel
         _selectedColor.IsSelected = true;
         _selectedIcon = AvailableIcons[0];
         _selectedIcon.IsSelected = true;
+        PickerColor = Microsoft.Maui.Graphics.Color.FromArgb(_selectedCategory.Color);
 
         SelectColorCommand = new Command<string>(SelectColor);
         ChooseIconCommand = new Command(async () => await ChooseIconAsync());
@@ -65,6 +67,7 @@ public class CreateHabitViewModel : BaseViewModel
         "Loisirs & quotidien"
     };
     public ObservableCollection<string> Frequencies { get; }
+    public IReadOnlyList<Category> Categories => Category.DefaultCategories;
 
     public string Title
     {
@@ -90,6 +93,21 @@ public class CreateHabitViewModel : BaseViewModel
                 SaveCommand.ChangeCanExecute();
         }
     }
+
+    public Category SelectedCategory
+    {
+        get => _selectedCategory;
+        set
+        {
+            if (!SetProperty(ref _selectedCategory, value))
+                return;
+
+            OnPropertyChanged(nameof(DefaultCo2));
+            PickerColor = Microsoft.Maui.Graphics.Color.FromArgb(value.Color);
+        }
+    }
+
+    public double DefaultCo2 => SelectedCategory.DefaultCo2;
 
     public HabitColorOption SelectedColor
     {
@@ -290,6 +308,11 @@ public class CreateHabitViewModel : BaseViewModel
             {
                 UserId = user.Id,
                 Title = Title.Trim(),
+                Category = SelectedCategory.Code,
+                Color = SelectedColor.HexValue,
+                Icon = SelectedIcon.Key,
+                FrequencyType = SelectedFrequency,
+                Co2ReductionPerAction = SelectedCategory.DefaultCo2,
                 Subtitle = SelectedFrequency,
                 HexColor = SelectedColor.HexValue,
                 IconName = SelectedIcon.Key,
